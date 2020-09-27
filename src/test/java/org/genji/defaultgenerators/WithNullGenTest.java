@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.genji.Utils.assertBetween;
 
 class WithNullGenTest {
     private static final Random RANDOM = new Random();
@@ -18,6 +18,6 @@ class WithNullGenTest {
                                 .limit(50)
                                 .filter(Objects::isNull)
                                 .count();
-        assertThat(nulls).isBetween(2L, 48L);
+        assertBetween(nulls, 2L, 48L);
     }
 }

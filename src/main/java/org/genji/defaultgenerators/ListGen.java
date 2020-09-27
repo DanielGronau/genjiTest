@@ -1,13 +1,10 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
-import org.genji.GeneratorResolver;
-import org.genji.NoGeneratorFoundException;
 import org.genji.Support;
 import org.genji.annotations.Size;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +26,8 @@ public class ListGen implements Generator<List<?>> {
 
         return Stream.generate(
             () -> Support.generatorFor(types[0])
-                      .generate(random, annotations, Support.getParameterTypes(types[0]))
-                      .limit(random.nextInt(sizeTo - sizeFrom) + sizeFrom)
-                      .collect(Collectors.toList()));
+                         .generate(random, annotations, Support.getParameterTypes(types[0]))
+                         .limit(random.nextInt(sizeTo - sizeFrom) + sizeFrom)
+                         .collect(Collectors.toList()));
     }
 }
