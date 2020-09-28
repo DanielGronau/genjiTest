@@ -9,17 +9,13 @@ import java.util.*;
 
 public final class GeneratorResolver {
 
-    private static final Map<Class<?>, Generator<?>> GENERATORS = new HashMap<>();
+    private static final Map<Class<?>, Generator<?>> GENERATORS = Map.ofEntries(
+        Map.entry(Integer.class, new IntegerGen()),
+        Map.entry(String.class, new StringGen()),
+        Map.entry(List.class, new ListGen())
+    );
 
-    private static final Map<Class<?>, Class<?>> SUPER_GENERATORS = new HashMap<>();
-
-    static {
-        GENERATORS.put(Integer.class, new IntegerGen());
-        GENERATORS.put(String.class, new StringGen());
-        GENERATORS.put(List.class, new ListGen());
-
-        SUPER_GENERATORS.put(Enum.class, EnumGen.class);
-    }
+    private static final Map<Class<?>, Class<?>> SUPER_GENERATORS = Map.ofEntries(Map.entry(Enum.class, EnumGen.class));
 
     public static Optional<Generator<?>> resolve(Class<?> rawType) {
         return standardGenerator(rawType).or(
