@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Size {
-    long from() default 0;
-    long to();
+    int from() default 0;
+    int to() default 20;
 }

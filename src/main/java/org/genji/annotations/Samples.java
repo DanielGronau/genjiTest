@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies the range of {@link org.genji.Generator} values for an integral number type like {@link Integer}.
+ * Specifies the number of samples to be generated.
  *
  * Can be specified at class or method level.
  */

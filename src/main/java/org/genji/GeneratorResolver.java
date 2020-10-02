@@ -12,7 +12,9 @@ public final class GeneratorResolver {
     private static final Map<Class<?>, Generator<?>> GENERATORS = Map.ofEntries(
         Map.entry(Integer.class, new IntegerGen()),
         Map.entry(String.class, new StringGen()),
-        Map.entry(List.class, new ListGen())
+        Map.entry(List.class, new ListGen()),
+
+        Map.entry(Integer.TYPE, new IntegerGen())
     );
 
     private static final Map<Class<?>, Class<?>> SUPER_GENERATORS = Map.ofEntries(Map.entry(Enum.class, EnumGen.class));

@@ -6,11 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies the range of {@link org.genji.Generator} values for an integral number type like {@link Integer}.
+ * Specifies the range of {@link org.genji.Generator} values for {@link Integer}.
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Between {
-    long from();
-    long to();
+public @interface IntSpec {
+    // overwrites the other values
+    int[] oneOf() default {};
+
+    int from() default Integer.MIN_VALUE;
+    int to() default Integer.MAX_VALUE;
 }

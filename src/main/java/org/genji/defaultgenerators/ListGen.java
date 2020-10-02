@@ -7,22 +7,21 @@ import org.genji.annotations.Size;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.genji.Support.findAnnotation;
 
+@Size
 public class ListGen implements Generator<List<?>> {
-
-    static final int DEFAULT_LENGTH = 20;
 
     @Override
     public Stream<List<?>> generate(Random random, List<Annotation> annotations, Type... types) {
-        Optional<Size> sizeAnnotation = findAnnotation(Size.class, annotations);
-        int sizeFrom = sizeAnnotation.map(a -> (int) Math.max(a.from(), 0)).orElse(0);
-        int sizeTo = sizeAnnotation.map(a -> (int) Math.max(a.to(), sizeFrom)).orElse(DEFAULT_LENGTH);
+        Size size = findAnnotation(Size.class, annotations)
+                        .orElseGet(() -> ListGen.class.getAnnotation(Size.class));
+        int sizeFrom = Math.max(size.from(), 0);
+        int sizeTo = Math.max(size.to(), sizeFrom);
 
         return Stream.generate(
             () -> Support.generatorFor(types[0])

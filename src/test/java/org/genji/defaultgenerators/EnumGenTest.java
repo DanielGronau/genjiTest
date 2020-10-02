@@ -3,7 +3,7 @@ package org.genji.defaultgenerators;
 import org.genji.GeneratorResolver;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -23,7 +23,7 @@ class EnumGenTest {
     void generate() {
         var list =
             GeneratorResolver.resolve(TestEnum.class).get()
-                             .generate(RANDOM, Collections.emptyList())
+                             .generate(RANDOM, List.of())
                              .limit(50)
                              .collect(Collectors.toList());
         assertTrue(list.stream().filter(e -> e == TestEnum.FOO).count() > 2);

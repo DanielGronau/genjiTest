@@ -17,6 +17,11 @@ public class FooTest {
     }
 
     @GenjiTest
+    void addRule(int i1, Integer i2) {
+        assertEquals(i1 + i2, i2 + i1);
+    }
+
+    @GenjiTest
     void reverseRule(List<List<String>> list) {
         System.err.println(list);
         List<List<String>> original = List.copyOf(list);
