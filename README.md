@@ -1,5 +1,7 @@
 # GenjiTest
 
+[![Build Status](https://travis-ci.org/DanielGronau/genjiTest.svg?branch=master)](https://travis-ci.org/DanielGronau/genjiTest)
+
 This is a small library to help writing randomized parametrized Tests in JUnit 5.
 
 The goals are:
