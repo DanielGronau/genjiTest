@@ -1,0 +1,9 @@
+language: java
+
+matrix:
+  include:
+    - jdk: openjdk11
+    - jdk: openjdk14
+
+before_install:
+  - unset _JAVA_OPTIONS
