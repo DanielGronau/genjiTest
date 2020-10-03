@@ -15,6 +15,9 @@ public final class GeneratorResolver {
             Map.entry(Integer.TYPE, IntGen.INSTANCE),
             Map.entry(Integer.class, IntGen.INSTANCE),
 
+            Map.entry(Long.TYPE, LongGen.INSTANCE),
+            Map.entry(Long.class, LongGen.INSTANCE),
+
             Map.entry(Character.TYPE, CharGen.INSTANCE),
             Map.entry(Character.class, CharGen.INSTANCE),
 
