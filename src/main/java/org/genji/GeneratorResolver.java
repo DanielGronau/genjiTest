@@ -4,33 +4,38 @@ import org.genji.defaultgenerators.*;
 
 import java.util.*;
 
+import static java.util.Map.*;
+
 public final class GeneratorResolver {
 
     private static final Map<Class<?>, Generator<?>> GENERATORS =
-        Map.ofEntries(
-            Map.entry(String.class, StringGen.INSTANCE),
-            Map.entry(List.class, ListGen.INSTANCE),
-            Map.entry(Optional.class, OptionalGen.INSTANCE),
+        ofEntries(
+            entry(String.class, StringGen.INSTANCE),
+            entry(List.class, ListGen.INSTANCE),
+            entry(Optional.class, OptionalGen.INSTANCE),
 
-            Map.entry(Byte.TYPE, ByteGen.INSTANCE),
-            Map.entry(Byte.class, ByteGen.INSTANCE),
+            entry(Double.TYPE, DoubleGen.INSTANCE),
+            entry(Double.class, DoubleGen.INSTANCE),
 
-            Map.entry(Integer.TYPE, IntGen.INSTANCE),
-            Map.entry(Integer.class, IntGen.INSTANCE),
+            entry(Byte.TYPE, ByteGen.INSTANCE),
+            entry(Byte.class, ByteGen.INSTANCE),
 
-            Map.entry(Long.TYPE, LongGen.INSTANCE),
-            Map.entry(Long.class, LongGen.INSTANCE),
+            entry(Integer.TYPE, IntGen.INSTANCE),
+            entry(Integer.class, IntGen.INSTANCE),
 
-            Map.entry(Character.TYPE, CharGen.INSTANCE),
-            Map.entry(Character.class, CharGen.INSTANCE),
+            entry(Long.TYPE, LongGen.INSTANCE),
+            entry(Long.class, LongGen.INSTANCE),
 
-            Map.entry(Boolean.TYPE, BoolGen.INSTANCE),
-            Map.entry(Boolean.class, BoolGen.INSTANCE)
+            entry(Character.TYPE, CharGen.INSTANCE),
+            entry(Character.class, CharGen.INSTANCE),
+
+            entry(Boolean.TYPE, BoolGen.INSTANCE),
+            entry(Boolean.class, BoolGen.INSTANCE)
         );
 
     private static final Map<Class<?>, Class<?>> SUPER_GENERATORS =
-        Map.ofEntries(
-            Map.entry(Enum.class, EnumGen.class)
+        ofEntries(
+            entry(Enum.class, EnumGen.class)
         );
 
     public static Optional<Generator<?>> resolve(Class<?> rawType) {
