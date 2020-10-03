@@ -16,15 +16,14 @@ import static org.genji.Support.findAnnotation;
 @Size
 public class ListGen implements Generator<List<?>> {
 
-    public static ListGen INSTANCE = new ListGen();
+    public static final ListGen INSTANCE = new ListGen();
 
     private ListGen() {
     }
 
     @Override
     public Stream<List<?>> generate(Random random, List<Annotation> annotations, Type... types) {
-        Size size = findAnnotation(Size.class, annotations)
-                        .orElseGet(() -> ListGen.class.getAnnotation(Size.class));
+        Size size = findAnnotation(Size.class, annotations, ListGen.class);
         int sizeFrom = Math.max(size.from(), 0);
         int sizeTo = Math.max(size.to(), sizeFrom);
 

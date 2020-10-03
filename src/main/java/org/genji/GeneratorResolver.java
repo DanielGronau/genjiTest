@@ -10,6 +10,7 @@ public final class GeneratorResolver {
         Map.ofEntries(
             Map.entry(String.class, StringGen.INSTANCE),
             Map.entry(List.class, ListGen.INSTANCE),
+            Map.entry(Optional.class, OptionalGen.INSTANCE),
 
             Map.entry(Integer.TYPE, IntGen.INSTANCE),
             Map.entry(Integer.class, IntGen.INSTANCE),

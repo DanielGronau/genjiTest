@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public class BoolGen implements Generator<Boolean> {
 
-    public static BoolGen INSTANCE = new BoolGen();
+    public static final BoolGen INSTANCE = new BoolGen();
 
     private BoolGen() {
     }

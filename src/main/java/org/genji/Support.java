@@ -8,6 +8,9 @@ import java.util.Optional;
 
 final public class Support {
 
+    private Support() {
+    }
+
     public static <T extends Annotation> Optional<T> findAnnotation(
         Class<T> annotationClass,
         Collection<? extends Annotation> annotations) {
@@ -15,6 +18,17 @@ final public class Support {
                           .filter(annotationClass::isInstance)
                           .map(annotationClass::cast)
                           .findFirst();
+    }
+
+    public static <T extends Annotation> T findAnnotation(
+        Class<T> annotationClass,
+        Collection<? extends Annotation> annotations,
+        Class<?> self) {
+        return annotations.stream()
+                          .filter(annotationClass::isInstance)
+                          .map(annotationClass::cast)
+                          .findFirst()
+                          .orElseGet(() -> self.getAnnotation(annotationClass));
     }
 
     public static Generator<?> generatorFor(Type type) throws NoGeneratorFoundException {

@@ -14,15 +14,14 @@ import static org.genji.Support.findAnnotation;
 @StringSpec
 public class StringGen implements Generator<String> {
 
-    public static StringGen INSTANCE = new StringGen();
+    public static final StringGen INSTANCE = new StringGen();
 
     private StringGen() {
     }
 
     @Override
     public Stream<String> generate(Random random, List<Annotation> annotations, Type... types) {
-        StringSpec spec = findAnnotation(StringSpec.class, annotations)
-                              .orElseGet(() -> StringGen.class.getAnnotation(StringSpec.class));
+        StringSpec spec = findAnnotation(StringSpec.class, annotations, StringGen.class);
 
         int lengthFrom = (int) Math.max(spec.from(), 0);
         int lengthTo = (int) Math.max(spec.to(), lengthFrom);

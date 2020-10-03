@@ -58,5 +58,4 @@ class IntGenTest {
         assertTrue(list.stream().anyMatch(i -> 5 < i && i < 12));
     }
 
-
 }
