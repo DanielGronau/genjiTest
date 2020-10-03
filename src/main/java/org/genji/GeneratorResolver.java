@@ -12,6 +12,9 @@ public final class GeneratorResolver {
             Map.entry(List.class, ListGen.INSTANCE),
             Map.entry(Optional.class, OptionalGen.INSTANCE),
 
+            Map.entry(Byte.TYPE, ByteGen.INSTANCE),
+            Map.entry(Byte.class, ByteGen.INSTANCE),
+
             Map.entry(Integer.TYPE, IntGen.INSTANCE),
             Map.entry(Integer.class, IntGen.INSTANCE),
 
