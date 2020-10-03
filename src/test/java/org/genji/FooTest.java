@@ -2,6 +2,7 @@ package org.genji;
 
 import org.genji.annotations.GenjiTest;
 import org.genji.annotations.Seed;
+import org.genji.annotations.Size;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,7 @@ public class FooTest {
     }
 
     @GenjiTest
-    void reverseRule(List<List<String>> list) {
+    void reverseRule(List<@Size(to=3) List<String>> list) {
         System.err.println(list);
         List<List<String>> original = List.copyOf(list);
         Collections.reverse(list);
