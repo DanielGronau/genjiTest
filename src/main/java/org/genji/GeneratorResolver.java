@@ -8,14 +8,17 @@ public final class GeneratorResolver {
 
     private static final Map<Class<?>, Generator<?>> GENERATORS =
         Map.ofEntries(
-            Map.entry(String.class, new StringGen()),
-            Map.entry(List.class, new ListGen()),
+            Map.entry(String.class, StringGen.INSTANCE),
+            Map.entry(List.class, ListGen.INSTANCE),
 
-            Map.entry(Integer.TYPE, new IntGen()),
-            Map.entry(Integer.class, new IntGen()),
+            Map.entry(Integer.TYPE, IntGen.INSTANCE),
+            Map.entry(Integer.class, IntGen.INSTANCE),
 
-            Map.entry(Character.TYPE, new CharGen()),
-            Map.entry(Character.class, new CharGen())
+            Map.entry(Character.TYPE, CharGen.INSTANCE),
+            Map.entry(Character.class, CharGen.INSTANCE),
+
+            Map.entry(Boolean.TYPE, BoolGen.INSTANCE),
+            Map.entry(Boolean.class, BoolGen.INSTANCE)
         );
 
     private static final Map<Class<?>, Class<?>> SUPER_GENERATORS =

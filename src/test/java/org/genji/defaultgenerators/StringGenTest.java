@@ -20,7 +20,7 @@ class StringGenTest {
 
     @Test
     void generate() {
-        var list = new StringGen()
+        var list = StringGen.INSTANCE
                        .generate(RANDOM, List.of())
                        .limit(50)
                        .collect(toList());
@@ -37,7 +37,7 @@ class StringGenTest {
         var stringSpec = StringGenTest.class
                              .getDeclaredMethod("generate_withStringLength")
                              .getAnnotation(StringSpec.class);
-        var list = new StringGen()
+        var list = StringGen.INSTANCE
                        .generate(RANDOM, List.of(stringSpec))
                        .limit(50)
                        .collect(toList());
@@ -54,7 +54,7 @@ class StringGenTest {
         var stringSpec = StringGenTest.class
                              .getDeclaredMethod("generate_withCharSet")
                              .getAnnotation(StringSpec.class);
-        var list = new StringGen()
+        var list = StringGen.INSTANCE
                        .generate(RANDOM, List.of(stringSpec))
                        .limit(50)
                        .collect(toList());
@@ -71,7 +71,7 @@ class StringGenTest {
         var stringSpec = StringGenTest.class
                              .getDeclaredMethod("generate_withOneOf")
                              .getAnnotation(StringSpec.class);
-        var set = new StringGen()
+        var set = StringGen.INSTANCE
                       .generate(RANDOM, List.of(stringSpec))
                       .limit(50)
                       .collect(toSet());

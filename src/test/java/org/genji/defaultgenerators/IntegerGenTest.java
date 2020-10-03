@@ -12,13 +12,13 @@ import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class IntegerGenTest {
+class IntGenTest {
 
     private static final Random RANDOM = new Random();
 
     @Test
     void generate() {
-        var list = new IntGen()
+        var list = IntGen.INSTANCE
                        .generate(RANDOM, List.of())
                        .limit(50)
                        .collect(toList());
@@ -31,10 +31,10 @@ class IntegerGenTest {
     @Test
     @IntSpec(oneOf = {2, 5, 7})
     void generate_OneOf() throws Exception {
-        var intSpec = IntegerGenTest.class
+        var intSpec = IntGenTest.class
                              .getDeclaredMethod("generate_OneOf")
                              .getAnnotation(IntSpec.class);
-        var set = new IntGen()
+        var set = IntGen.INSTANCE
                        .generate(RANDOM, List.of(intSpec))
                        .limit(50)
                        .collect(toSet());
@@ -45,10 +45,10 @@ class IntegerGenTest {
     @Test
     @IntSpec(from = 3, to = 15)
     void generate_FromTo() throws Exception {
-        var intSpec = IntegerGenTest.class
+        var intSpec = IntGenTest.class
                           .getDeclaredMethod("generate_FromTo")
                           .getAnnotation(IntSpec.class);
-        var list = new IntGen()
+        var list = IntGen.INSTANCE
                       .generate(RANDOM, List.of(intSpec))
                       .limit(50)
                       .collect(toList());

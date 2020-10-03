@@ -16,6 +16,11 @@ import static org.genji.Support.findAnnotation;
 @Size
 public class ListGen implements Generator<List<?>> {
 
+    public static ListGen INSTANCE = new ListGen();
+
+    private ListGen() {
+    }
+
     @Override
     public Stream<List<?>> generate(Random random, List<Annotation> annotations, Type... types) {
         Size size = findAnnotation(Size.class, annotations)

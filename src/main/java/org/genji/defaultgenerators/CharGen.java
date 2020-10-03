@@ -13,6 +13,12 @@ import static org.genji.Support.findAnnotation;
 
 @CharSpec
 public class CharGen implements Generator<Character> {
+
+    public static CharGen INSTANCE = new CharGen();
+
+    private CharGen() {
+    }
+
     @Override
     public Stream<Character> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
         CharSpec spec = findAnnotation(CharSpec.class, annotations)

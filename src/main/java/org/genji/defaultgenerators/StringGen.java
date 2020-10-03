@@ -14,6 +14,11 @@ import static org.genji.Support.findAnnotation;
 @StringSpec
 public class StringGen implements Generator<String> {
 
+    public static StringGen INSTANCE = new StringGen();
+
+    private StringGen() {
+    }
+
     @Override
     public Stream<String> generate(Random random, List<Annotation> annotations, Type... types) {
         StringSpec spec = findAnnotation(StringSpec.class, annotations)
@@ -34,7 +39,7 @@ public class StringGen implements Generator<String> {
     }
 
     private static Stream<String> generateSynthetic(Random random, int lengthFrom, int lengthTo, String chars) {
-        var charIt = new CharGen().generate(random, chars).iterator();
+        var charIt = CharGen.INSTANCE.generate(random, chars).iterator();
         var sb = new StringBuilder();
         return Stream.generate(() -> {
             sb.setLength(0);

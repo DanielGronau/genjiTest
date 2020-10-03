@@ -15,7 +15,7 @@ public class BoolGenTest {
 
     @Test
     void generate() {
-        var set = new BoolGen().generate(RANDOM, List.of()).limit(50).collect(Collectors.toSet());
+        var set = BoolGen.INSTANCE.generate(RANDOM, List.of()).limit(50).collect(Collectors.toSet());
         assertEquals(Set.of(true, false), set);
     }
 }

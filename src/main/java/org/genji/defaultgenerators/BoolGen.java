@@ -9,6 +9,12 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 public class BoolGen implements Generator<Boolean> {
+
+    public static BoolGen INSTANCE = new BoolGen();
+
+    private BoolGen() {
+    }
+
     @Override
     public Stream<Boolean> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
         return Stream.generate(random::nextBoolean);

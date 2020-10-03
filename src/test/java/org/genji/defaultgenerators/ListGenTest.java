@@ -19,7 +19,7 @@ class ListGenTest {
     @SuppressWarnings({"unchecked", "rawtypes"})
     void generate() {
         List<List<String>> lists =
-            (List) new ListGen()
+            (List) ListGen.INSTANCE
                        .generate(RANDOM, List.of(), String.class)
                        .limit(50)
                        .collect(toList());
@@ -41,7 +41,7 @@ class ListGenTest {
                        .getDeclaredMethod("generate_sized")
                        .getAnnotation(Size.class);
         List<List<String>> lists =
-            (List) new ListGen()
+            (List) ListGen.INSTANCE
                        .generate(RANDOM, List.of(size), String.class)
                        .limit(50)
                        .collect(toList());
@@ -63,7 +63,7 @@ class ListGenTest {
                        .getDeclaredMethod("generate_nested")
                        .getAnnotation(Size.class);
         List<List<List<String>>> listss =
-            (List) new ListGen()
+            (List) ListGen.INSTANCE
                        .generate(RANDOM, List.of(size), getParametrizedType(List.class, String.class))
                        .limit(5)
                        .collect(toList());

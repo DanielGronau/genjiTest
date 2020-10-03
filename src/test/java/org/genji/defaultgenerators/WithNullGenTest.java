@@ -13,7 +13,7 @@ class WithNullGenTest {
 
     @Test
     void generate() {
-        long nulls = WithNullGen.withNulls(0.2, new StringGen())
+        long nulls = WithNullGen.withNulls(0.2, StringGen.INSTANCE)
                                 .generate(RANDOM, Collections.emptyList())
                                 .limit(50)
                                 .filter(Objects::isNull)

@@ -14,6 +14,11 @@ import static org.genji.Support.findAnnotation;
 @IntSpec
 public class IntGen implements Generator<Integer> {
 
+    public static IntGen INSTANCE = new IntGen();
+
+    private IntGen() {
+    }
+
     @Override
     public Stream<Integer> generate(Random random, List<Annotation> annotations, Type... types) {
         IntSpec intSpec = findAnnotation(IntSpec.class, annotations)

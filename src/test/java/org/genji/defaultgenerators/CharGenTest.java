@@ -18,7 +18,7 @@ class CharGenTest {
 
     @Test
     void generate() {
-        var list = new CharGen()
+        var list  = CharGen.INSTANCE
                        .generate(RANDOM, List.of())
                        .limit(50)
                        .collect(toList());
@@ -33,7 +33,7 @@ class CharGenTest {
         var charSpec = CharGenTest.class
                            .getDeclaredMethod("generate_charSet")
                            .getAnnotation(CharSpec.class);
-        var set = new CharGen()
+        var set = CharGen.INSTANCE
                       .generate(RANDOM, List.of(charSpec))
                       .limit(50)
                       .collect(toSet());
