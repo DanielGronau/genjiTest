@@ -1,9 +1,6 @@
 package org.genji;
 
-import org.genji.annotations.Size;
-
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -25,8 +22,8 @@ final public class Support {
                                            ? ((ParameterizedType) type).getRawType()
                                            : type);
         return GeneratorResolver
-                .resolve(elementClass)
-                .orElseThrow(() -> new NoGeneratorFoundException("for type " + type.toString()));
+                   .resolve(elementClass)
+                   .orElseThrow(() -> new NoGeneratorFoundException("for type " + type.toString()));
     }
 
     public static Type[] getParameterTypes(Type type) {

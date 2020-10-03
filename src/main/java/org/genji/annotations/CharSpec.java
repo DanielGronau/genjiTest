@@ -6,14 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies the range of {@link org.genji.Generator} values for {@link Integer}.
+ * Specifies characteristics of {@link String}s.
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IntSpec {
-    // overwrites the other values
-    int[] oneOf() default {};
-
-    int from() default Integer.MIN_VALUE;
-    int to() default Integer.MAX_VALUE;
+public @interface CharSpec {
+    String charSet() default " \0\t\n\r\\\"'²³?!#+*/;.-_<>|§$%&1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ[]{}";
 }

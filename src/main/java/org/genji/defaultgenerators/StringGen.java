@@ -25,7 +25,7 @@ public class StringGen implements Generator<String> {
         String[] oneOf = spec.oneOf();
 
         if (oneOf.length == 0 && chars.isEmpty()) {
-            throw new IllegalArgumentException("@StringSpec.chars cannot be empty");
+            throw new IllegalArgumentException("@StringSpec.charSet cannot be empty");
         }
 
         return oneOf.length == 0
@@ -34,12 +34,13 @@ public class StringGen implements Generator<String> {
     }
 
     private static Stream<String> generateSynthetic(Random random, int lengthFrom, int lengthTo, String chars) {
-        StringBuilder sb = new StringBuilder();
+        var charIt = new CharGen().generate(random, chars).iterator();
+        var sb = new StringBuilder();
         return Stream.generate(() -> {
             sb.setLength(0);
             int length = random.nextInt(lengthTo - lengthFrom) + lengthFrom;
             for (int i = 0; i < length; i++) {
-                sb.append(chars.charAt(random.nextInt(chars.length())));
+                sb.append(charIt.next());
             }
             return sb.toString();
         });

@@ -9,12 +9,6 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-enum TestEnum implements Cloneable {
-    FOO,
-    BAR,
-    BAZ
-}
-
 class EnumGenTest {
 
     private static final Random RANDOM = new Random();

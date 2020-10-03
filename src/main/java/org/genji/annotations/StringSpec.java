@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * Specifies characteristics of {@link String}s.
  */
-@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StringSpec {
     //overwrites the other properties

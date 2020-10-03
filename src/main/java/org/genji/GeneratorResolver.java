@@ -1,23 +1,27 @@
 package org.genji;
 
-import org.genji.defaultgenerators.EnumGen;
-import org.genji.defaultgenerators.IntegerGen;
-import org.genji.defaultgenerators.ListGen;
-import org.genji.defaultgenerators.StringGen;
+import org.genji.defaultgenerators.*;
 
 import java.util.*;
 
 public final class GeneratorResolver {
 
-    private static final Map<Class<?>, Generator<?>> GENERATORS = Map.ofEntries(
-        Map.entry(Integer.class, new IntegerGen()),
-        Map.entry(String.class, new StringGen()),
-        Map.entry(List.class, new ListGen()),
+    private static final Map<Class<?>, Generator<?>> GENERATORS =
+        Map.ofEntries(
+            Map.entry(String.class, new StringGen()),
+            Map.entry(List.class, new ListGen()),
 
-        Map.entry(Integer.TYPE, new IntegerGen())
-    );
+            Map.entry(Integer.TYPE, new IntegerGen()),
+            Map.entry(Integer.class, new IntegerGen()),
 
-    private static final Map<Class<?>, Class<?>> SUPER_GENERATORS = Map.ofEntries(Map.entry(Enum.class, EnumGen.class));
+            Map.entry(Character.TYPE, new CharGen()),
+            Map.entry(Character.class, new CharGen())
+        );
+
+    private static final Map<Class<?>, Class<?>> SUPER_GENERATORS =
+        Map.ofEntries(
+            Map.entry(Enum.class, EnumGen.class)
+        );
 
     public static Optional<Generator<?>> resolve(Class<?> rawType) {
         return standardGenerator(rawType).or(
