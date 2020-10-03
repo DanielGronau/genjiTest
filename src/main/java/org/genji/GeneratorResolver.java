@@ -11,8 +11,8 @@ public final class GeneratorResolver {
             Map.entry(String.class, new StringGen()),
             Map.entry(List.class, new ListGen()),
 
-            Map.entry(Integer.TYPE, new IntegerGen()),
-            Map.entry(Integer.class, new IntegerGen()),
+            Map.entry(Integer.TYPE, new IntGen()),
+            Map.entry(Integer.class, new IntGen()),
 
             Map.entry(Character.TYPE, new CharGen()),
             Map.entry(Character.class, new CharGen())

@@ -18,7 +18,7 @@ class IntegerGenTest {
 
     @Test
     void generate() {
-        var list = new IntegerGen()
+        var list = new IntGen()
                        .generate(RANDOM, List.of())
                        .limit(50)
                        .collect(toList());
@@ -34,7 +34,7 @@ class IntegerGenTest {
         var intSpec = IntegerGenTest.class
                              .getDeclaredMethod("generate_OneOf")
                              .getAnnotation(IntSpec.class);
-        var set = new IntegerGen()
+        var set = new IntGen()
                        .generate(RANDOM, List.of(intSpec))
                        .limit(50)
                        .collect(toSet());
@@ -48,7 +48,7 @@ class IntegerGenTest {
         var intSpec = IntegerGenTest.class
                           .getDeclaredMethod("generate_FromTo")
                           .getAnnotation(IntSpec.class);
-        var list = new IntegerGen()
+        var list = new IntGen()
                       .generate(RANDOM, List.of(intSpec))
                       .limit(50)
                       .collect(toList());

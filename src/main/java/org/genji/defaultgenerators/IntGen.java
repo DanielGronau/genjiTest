@@ -12,12 +12,12 @@ import java.util.stream.Stream;
 import static org.genji.Support.findAnnotation;
 
 @IntSpec
-public class IntegerGen implements Generator<Integer> {
+public class IntGen implements Generator<Integer> {
 
     @Override
     public Stream<Integer> generate(Random random, List<Annotation> annotations, Type... types) {
         IntSpec intSpec = findAnnotation(IntSpec.class, annotations)
-                              .orElseGet(() -> IntegerGen.class.getAnnotation(IntSpec.class));
+                              .orElseGet(() -> IntGen.class.getAnnotation(IntSpec.class));
         int from = intSpec.from();
         int to = intSpec.to();
         int[] oneOf = intSpec.oneOf();
