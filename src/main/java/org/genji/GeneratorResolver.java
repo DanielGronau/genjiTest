@@ -17,6 +17,9 @@ public final class GeneratorResolver {
             entry(Double.TYPE, DoubleGen.INSTANCE),
             entry(Double.class, DoubleGen.INSTANCE),
 
+            entry(Float.TYPE, FloatGen.INSTANCE),
+            entry(Float.class, FloatGen.INSTANCE),
+
             entry(Byte.TYPE, ByteGen.INSTANCE),
             entry(Byte.class, ByteGen.INSTANCE),
 

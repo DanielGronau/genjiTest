@@ -24,7 +24,6 @@ public class FooTest {
 
     @GenjiTest
     void reverseRule(List<@Size(to=3) List<String>> list) {
-        System.err.println(list);
         List<List<String>> original = List.copyOf(list);
         Collections.reverse(list);
         Collections.reverse(list);

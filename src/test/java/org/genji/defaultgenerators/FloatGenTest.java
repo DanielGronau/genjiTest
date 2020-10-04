@@ -1,7 +1,6 @@
 package org.genji.defaultgenerators;
 
-import org.genji.annotations.DoubleSpec;
-import org.genji.annotations.IntSpec;
+import org.genji.annotations.FloatSpec;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,13 +12,13 @@ import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DoubleGenTest {
+class FloatGenTest {
 
     private static final Random RANDOM = new Random();
 
     @Test
     void generate() {
-        var list = DoubleGen.INSTANCE
+        var list = FloatGen.INSTANCE
                        .generate(RANDOM, List.of())
                        .limit(50)
                        .collect(toList());
@@ -30,29 +29,29 @@ class DoubleGenTest {
     }
 
     @Test
-    @DoubleSpec(oneOf = {2, 5, 7, Double.NEGATIVE_INFINITY, Double.NaN})
+    @FloatSpec(oneOf = {2, 5, 7, Float.NEGATIVE_INFINITY, Float.NaN})
     void generate_OneOf() throws Exception {
-        var doubleSpec = DoubleGenTest.class
-                             .getDeclaredMethod("generate_OneOf")
-                             .getAnnotation(DoubleSpec.class);
-        var set = DoubleGen.INSTANCE
-                       .generate(RANDOM, List.of(doubleSpec))
-                       .limit(50)
-                       .collect(toSet());
+        var floatSpec = FloatGenTest.class
+                            .getDeclaredMethod("generate_OneOf")
+                            .getAnnotation(FloatSpec.class);
+        var set = FloatGen.INSTANCE
+                      .generate(RANDOM, List.of(floatSpec))
+                      .limit(50)
+                      .collect(toSet());
 
-        assertEquals(Set.of(2.0, 5.0, 7.0, Double.NEGATIVE_INFINITY, Double.NaN), set);
+        assertEquals(Set.of(2.0F, 5.0F, 7.0F, Float.NEGATIVE_INFINITY, Float.NaN), set);
     }
 
     @Test
-    @DoubleSpec(from = 3, to = 15)
+    @FloatSpec(from = 3, to = 15)
     void generate_FromTo() throws Exception {
-        var doubleSpec = DoubleGenTest.class
-                          .getDeclaredMethod("generate_FromTo")
-                          .getAnnotation(DoubleSpec.class);
-        var list = DoubleGen.INSTANCE
-                      .generate(RANDOM, List.of(doubleSpec))
-                      .limit(50)
-                      .collect(toList());
+        var floatSpec = FloatGenTest.class
+                            .getDeclaredMethod("generate_FromTo")
+                            .getAnnotation(FloatSpec.class);
+        var list = FloatGen.INSTANCE
+                       .generate(RANDOM, List.of(floatSpec))
+                       .limit(50)
+                       .collect(toList());
 
         assertTrue(list.stream().allMatch(i -> i >= 3));
         assertTrue(list.stream().allMatch(i -> i <= 15));
