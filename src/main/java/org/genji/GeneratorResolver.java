@@ -2,6 +2,7 @@ package org.genji;
 
 import org.genji.defaultgenerators.*;
 
+import java.math.BigInteger;
 import java.util.*;
 
 import static java.util.Map.*;
@@ -13,6 +14,7 @@ public final class GeneratorResolver {
             entry(String.class, StringGen.INSTANCE),
             entry(List.class, ListGen.INSTANCE),
             entry(Optional.class, OptionalGen.INSTANCE),
+            entry(BigInteger.class, BigIntegerGen.INSTANCE),
 
             entry(Double.TYPE, DoubleGen.INSTANCE),
             entry(Double.class, DoubleGen.INSTANCE),
