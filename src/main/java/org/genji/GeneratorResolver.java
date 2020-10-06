@@ -23,6 +23,9 @@ public final class GeneratorResolver {
             entry(Byte.TYPE, ByteGen.INSTANCE),
             entry(Byte.class, ByteGen.INSTANCE),
 
+            entry(Short.TYPE, ShortGen.INSTANCE),
+            entry(Short.class, ShortGen.INSTANCE),
+
             entry(Integer.TYPE, IntGen.INSTANCE),
             entry(Integer.class, IntGen.INSTANCE),
 
