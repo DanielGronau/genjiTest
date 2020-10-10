@@ -1,11 +1,14 @@
 package org.genji;
 
+import org.genji.annotations.Custom;
 import org.genji.defaultgenerators.*;
 
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.*;
 
-import static java.util.Map.*;
+import static java.util.Map.entry;
+import static java.util.Map.ofEntries;
 
 public final class GeneratorResolver {
 
@@ -46,9 +49,47 @@ public final class GeneratorResolver {
             entry(Enum.class, EnumGen.class)
         );
 
-    public static Optional<Generator<?>> resolve(Class<?> rawType) {
-        return standardGenerator(rawType).or(
-            () -> superGenerator(rawType));
+    public static Optional<Generator<?>> resolve(Class<?> rawType, Map<Class<?>, Class<?>> customGenerators) {
+        return
+            customGenerator(rawType, customGenerators)
+                .or(() -> standardGenerator(rawType))
+                .or(() -> superGenerator(rawType));
+    }
+
+    private static Optional<Generator<?>> customGenerator(Class<?> type, Map<Class<?>, Class<?>> customGenerators) {
+        Class<?> rawType = type;
+        if (rawType.isPrimitive()) {
+            rawType = Array.get(Array.newInstance(rawType,1),0).getClass();
+        }
+
+        List<Class<?>> todo = new ArrayList<>();
+        todo.add(rawType);
+        while (!todo.isEmpty()) {
+            Class<?> superClassOrInterface = todo.remove(0);
+            Class<?> generatorClass = customGenerators.get(superClassOrInterface);
+            if (generatorClass != null) {
+                try {
+                    return Optional.of(
+                        (Generator<?>) generatorClass.getConstructor(Class.class).newInstance(rawType));
+                } catch (ReflectiveOperationException e) {
+                    try {
+                        return Optional.of(
+                            (Generator<?>) generatorClass.getConstructor().newInstance());
+                    } catch (ReflectiveOperationException f) {
+                        throw new AssertionError(
+                            "Generator class "
+                                + generatorClass.getSimpleName()
+                                + " should have either a zero argument or a one argument constructor taking the subclass to instantiate");
+                    }
+                }
+            }
+            if (superClassOrInterface.getSuperclass() != null) {
+                todo.add(superClassOrInterface.getSuperclass());
+            }
+            todo.addAll(Arrays.asList(superClassOrInterface.getInterfaces()));
+        }
+        return Optional.empty();
+
     }
 
     private static Optional<Generator<?>> standardGenerator(Class<?> rawType) {
@@ -63,14 +104,18 @@ public final class GeneratorResolver {
             Class<?> generatorClass = SUPER_GENERATORS.get(superClassOrInterface);
             if (generatorClass != null) {
                 try {
-                    return Optional.of((Generator<?>) generatorClass
-                                                          .getConstructor(Class.class)
-                                                          .newInstance(rawType));
+                    return Optional.of(
+                        (Generator<?>) generatorClass.getConstructor(Class.class).newInstance(rawType));
                 } catch (ReflectiveOperationException e) {
-                    throw new AssertionError(
-                        "Generator class "
-                            + generatorClass.getSimpleName()
-                            + " should have a one argument constructor taking the subclass to instantiate");
+                    try {
+                        return Optional.of(
+                            (Generator<?>) generatorClass.getConstructor().newInstance());
+                    } catch (ReflectiveOperationException f) {
+                        throw new AssertionError(
+                            "Generator class "
+                                + generatorClass.getSimpleName()
+                                + " should have a either a zero argument or a one argument constructor taking the subclass to instantiate");
+                    }
                 }
             }
             if (superClassOrInterface.getSuperclass() != null) {

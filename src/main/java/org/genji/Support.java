@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 final public class Support {
@@ -36,7 +37,7 @@ final public class Support {
                                            ? ((ParameterizedType) type).getRawType()
                                            : type);
         return GeneratorResolver
-                   .resolve(elementClass)
+                   .resolve(elementClass, Map.of())
                    .orElseThrow(() -> new NoGeneratorFoundException("for type " + type.toString()));
     }
 

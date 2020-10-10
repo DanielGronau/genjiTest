@@ -1,8 +1,6 @@
 package org.genji;
 
-import org.genji.annotations.Samples;
-import org.genji.annotations.Seed;
-import org.genji.annotations.WithNulls;
+import org.genji.annotations.*;
 import org.genji.defaultgenerators.WithNullGen;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -10,6 +8,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -29,7 +28,7 @@ public class GenjiProvider implements ArgumentsProvider {
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
         var annotations = collectAnnotations(extensionContext);
         var sampleSize = getSampleSize(extensionContext);
-        var generators = getGenerators(extensionContext.getRequiredTestMethod());
+        var generators = getGenerators(extensionContext);
         var iterators =
             IntStream.range(0, generators.size())
                      .mapToObj(i -> generators
@@ -55,12 +54,18 @@ public class GenjiProvider implements ArgumentsProvider {
                        .orElse(RANDOM);
     }
 
-    private static List<? extends Generator<?>> getGenerators(Method method) {
+    private static List<? extends Generator<?>> getGenerators(ExtensionContext extensionContext) {
+        var customGenerators = collectCustomGenerators(extensionContext);
+        Method method = extensionContext.getRequiredTestMethod();
         List<Generator<?>> generators =
-            Arrays.stream(method.getParameters())
-                  .map(parameter -> GeneratorResolver.resolve(parameter.getType()).orElseThrow(
-                      () -> new NoGeneratorFoundException("for " + parameter)))
-                  .collect(toList());
+            IntStream.range(0, method.getParameterCount())
+                .mapToObj(i -> {
+                    Parameter parameter = method.getParameters()[i];
+                    Map<Class<?>, Class<?>> customMap = customGenerators.get(i);
+                    return GeneratorResolver.resolve(parameter.getType(), customMap).orElseThrow(
+                        () -> new NoGeneratorFoundException("for " + parameter));
+                })
+                .collect(toList());
         for (int i = 0; i < generators.size(); i++) {
             var index = i;
             findAnnotation(WithNulls.class, List.of(method.getParameterAnnotations()[i]))
@@ -91,6 +96,32 @@ public class GenjiProvider implements ArgumentsProvider {
                      .map(annotations -> Arrays.stream(annotations).collect(
                          toMap(Annotation::getClass, a -> a, (a1, b) -> b, () -> new HashMap<>(defaultMap))))
                      .collect(toList());
+    }
+
+    private static List<Map<Class<?>, Class<?>>> collectCustomGenerators(ExtensionContext extensionContext) {
+        Map<Class<?>, Class<?>> defaultMap =
+            Arrays.stream(extensionContext.getRequiredTestClass().getAnnotationsByType(Custom.class))
+                  .collect(toMap(Custom::target, Custom::generator));
+        var testMethod = extensionContext.getRequiredTestMethod();
+        defaultMap.putAll(
+            Arrays.stream(testMethod.getAnnotationsByType(Custom.class))
+                  .collect(toMap(Custom::target, Custom::generator)));
+        return Arrays.stream(testMethod.getParameterAnnotations())
+                     .map(annotations -> Stream.concat(
+                         Arrays.stream(annotations)
+                               .filter(Custom.class::isInstance)
+                               .map(Custom.class::cast),
+                         Arrays.stream(annotations)
+                               .filter(Customs.class::isInstance)
+                               .map(Customs.class::cast)
+                               .flatMap(cs -> Arrays.stream(cs.value())))
+                                               .collect(toMap(
+                                                   Custom::target,
+                                                   Custom::generator,
+                                                   (a1, b) -> b,
+                                                   () -> new HashMap<>(defaultMap))))
+                     .collect(toList());
+
     }
 
 }

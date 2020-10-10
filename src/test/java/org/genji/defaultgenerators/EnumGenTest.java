@@ -4,6 +4,7 @@ import org.genji.GeneratorResolver;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ class EnumGenTest {
     @Test
     void generate() {
         var list =
-            GeneratorResolver.resolve(TestEnum.class).get()
+            GeneratorResolver.resolve(TestEnum.class, Map.of()).get()
                              .generate(RANDOM, List.of())
                              .limit(50)
                              .collect(Collectors.toList());
