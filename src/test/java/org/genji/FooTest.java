@@ -5,6 +5,7 @@ import org.genji.annotations.Seed;
 import org.genji.annotations.Size;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +24,7 @@ public class FooTest {
     }
 
     @GenjiTest
-    void reverseRule(List<@Size(to=3) List<String>> list) {
+    void reverseRule(List<@Size(from = 1, to = 3) LinkedList<String>> list) {
         List<List<String>> original = List.copyOf(list);
         Collections.reverse(list);
         Collections.reverse(list);

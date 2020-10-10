@@ -3,6 +3,7 @@ package org.genji.defaultgenerators;
 import org.genji.annotations.Size;
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -19,7 +20,7 @@ class ListGenTest {
     @SuppressWarnings({"unchecked", "rawtypes"})
     void generate() {
         List<List<String>> lists =
-            (List) ListGen.INSTANCE
+            (List) new ListGen()
                        .generate(RANDOM, List.of(), String.class)
                        .limit(50)
                        .collect(toList());
@@ -34,6 +35,19 @@ class ListGenTest {
     }
 
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    void generate_correctListType() {
+        List<List<String>> lists =
+            (List) new ListGen(LinkedList.class)
+                       .generate(RANDOM, List.of(), String.class)
+                       .limit(2)
+                       .collect(toList());
+        for (List<String> list : lists) {
+            assertTrue(list instanceof LinkedList);
+        }
+    }
+
+    @Test
     @Size(from = 3, to = 5)
     @SuppressWarnings({"unchecked", "rawtypes"})
     void generate_sized() throws Exception {
@@ -41,7 +55,7 @@ class ListGenTest {
                        .getDeclaredMethod("generate_sized")
                        .getAnnotation(Size.class);
         List<List<String>> lists =
-            (List) ListGen.INSTANCE
+            (List) new ListGen()
                        .generate(RANDOM, List.of(size), String.class)
                        .limit(50)
                        .collect(toList());
@@ -63,7 +77,7 @@ class ListGenTest {
                        .getDeclaredMethod("generate_nested")
                        .getAnnotation(Size.class);
         List<List<List<String>>> listss =
-            (List) ListGen.INSTANCE
+            (List) new ListGen()
                        .generate(RANDOM, List.of(size), getParametrizedType(List.class, String.class))
                        .limit(5)
                        .collect(toList());

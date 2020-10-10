@@ -1,6 +1,5 @@
 package org.genji;
 
-import org.genji.annotations.Custom;
 import org.genji.defaultgenerators.*;
 
 import java.lang.reflect.Array;
@@ -15,7 +14,6 @@ public final class GeneratorResolver {
     private static final Map<Class<?>, Generator<?>> GENERATORS =
         ofEntries(
             entry(String.class, StringGen.INSTANCE),
-            entry(List.class, ListGen.INSTANCE),
             entry(Optional.class, OptionalGen.INSTANCE),
             entry(BigInteger.class, BigIntegerGen.INSTANCE),
 
@@ -46,7 +44,8 @@ public final class GeneratorResolver {
 
     private static final Map<Class<?>, Class<?>> SUPER_GENERATORS =
         ofEntries(
-            entry(Enum.class, EnumGen.class)
+            entry(Enum.class, EnumGen.class),
+            entry(List.class, ListGen.class)
         );
 
     public static Optional<Generator<?>> resolve(Class<?> rawType, Map<Class<?>, Class<?>> customGenerators) {
@@ -59,7 +58,7 @@ public final class GeneratorResolver {
     private static Optional<Generator<?>> customGenerator(Class<?> type, Map<Class<?>, Class<?>> customGenerators) {
         Class<?> rawType = type;
         if (rawType.isPrimitive()) {
-            rawType = Array.get(Array.newInstance(rawType,1),0).getClass();
+            rawType = Array.get(Array.newInstance(rawType, 1), 0).getClass();
         }
 
         List<Class<?>> todo = new ArrayList<>();

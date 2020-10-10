@@ -6,9 +6,9 @@ import org.genji.annotations.Size;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.genji.Support.findAnnotation;
@@ -16,9 +16,15 @@ import static org.genji.Support.findAnnotation;
 @Size
 public class ListGen implements Generator<List<?>> {
 
-    public static final ListGen INSTANCE = new ListGen();
 
-    private ListGen() {
+    private final Class<?> listClass;
+
+    public ListGen() {
+        this(ArrayList.class);
+    }
+
+    public ListGen(Class<?> listClass) {
+        this.listClass = listClass;
     }
 
     @Override
@@ -31,6 +37,21 @@ public class ListGen implements Generator<List<?>> {
             () -> Support.generatorFor(types[0])
                          .generate(random, annotations, Support.getParameterTypes(types[0]))
                          .limit(random.nextInt(sizeTo - sizeFrom) + sizeFrom)
-                         .collect(Collectors.toList()));
+                         .reduce(getList(), ListGen::add, (x, y) -> x));
+    }
+
+    private List<?> getList() {
+        try {
+            Class<?> listType = listClass.isInterface() ? ArrayList.class : listClass;
+            return (List<?>) listType.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<?> add(List<?> list, Object value) {
+        ((List<Object>) list).add(value);
+        return list;
     }
 }
