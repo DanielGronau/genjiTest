@@ -1,7 +1,6 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
-import org.genji.annotations.IntSpec;
 import org.genji.annotations.LongSpec;
 
 import java.lang.annotation.Annotation;
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import static org.genji.Support.findAnnotation;
+import static org.genji.ReflectionSupport.findAnnotation;
 
 @LongSpec
 public class LongGen implements Generator<Long> {

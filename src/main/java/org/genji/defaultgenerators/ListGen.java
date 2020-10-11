@@ -1,7 +1,8 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
-import org.genji.Support;
+import org.genji.GeneratorResolver;
+import org.genji.ReflectionSupport;
 import org.genji.annotations.Size;
 
 import java.lang.annotation.Annotation;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import static org.genji.Support.findAnnotation;
+import static org.genji.ReflectionSupport.findAnnotation;
 
 @Size
 public class ListGen implements Generator<List<?>> {
@@ -34,10 +35,10 @@ public class ListGen implements Generator<List<?>> {
         int sizeTo = Math.max(size.to(), sizeFrom);
 
         return Stream.generate(
-            () -> Support.generatorFor(types[0])
-                         .generate(random, annotations, Support.getParameterTypes(types[0]))
-                         .limit(random.nextInt(sizeTo - sizeFrom) + sizeFrom)
-                         .reduce(getList(), ListGen::add, (x, y) -> x));
+            () -> GeneratorResolver.generatorFor(types[0])
+                                   .generate(random, annotations, ReflectionSupport.getParameterTypes(types[0]))
+                                   .limit(random.nextInt(sizeTo - sizeFrom) + sizeFrom)
+                                   .reduce(getList(), ListGen::add, (x, y) -> x));
     }
 
     private List<?> getList() {

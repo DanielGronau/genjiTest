@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import static org.genji.Support.findAnnotation;
+import static org.genji.ReflectionSupport.findAnnotation;
 
 @IntSpec
 public class IntGen implements Generator<Integer> {

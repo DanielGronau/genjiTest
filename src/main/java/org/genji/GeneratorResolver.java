@@ -2,12 +2,16 @@ package org.genji;
 
 import org.genji.defaultgenerators.*;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
+import static org.genji.ReflectionSupport.construct;
+import static org.genji.ReflectionSupport.getRawType;
 
 public final class GeneratorResolver {
 
@@ -55,37 +59,16 @@ public final class GeneratorResolver {
                 .or(() -> superGenerator(rawType));
     }
 
+    @SuppressWarnings("unchecked")
     private static Optional<Generator<?>> customGenerator(Class<?> type, Map<Class<?>, Class<?>> customGenerators) {
-        Class<?> rawType = type;
-        if (rawType.isPrimitive()) {
-            rawType = Array.get(Array.newInstance(rawType, 1), 0).getClass();
-        }
-
-        List<Class<?>> todo = new ArrayList<>();
-        todo.add(rawType);
-        while (!todo.isEmpty()) {
-            Class<?> superClassOrInterface = todo.remove(0);
-            Class<?> generatorClass = customGenerators.get(superClassOrInterface);
+        for (Class<?> superClassOrInterface : ReflectionSupport.superTypes(type)) {
+            Class<Generator<?>> generatorClass = (Class<Generator<?>>) customGenerators.get(superClassOrInterface);
             if (generatorClass != null) {
-                try {
-                    return Optional.of(
-                        (Generator<?>) generatorClass.getConstructor(Class.class).newInstance(rawType));
-                } catch (ReflectiveOperationException e) {
-                    try {
-                        return Optional.of(
-                            (Generator<?>) generatorClass.getConstructor().newInstance());
-                    } catch (ReflectiveOperationException f) {
-                        throw new AssertionError(
-                            "Generator class "
-                                + generatorClass.getSimpleName()
-                                + " should have either a zero argument or a one argument constructor taking the subclass to instantiate");
-                    }
-                }
+                return Optional.of(
+                    construct(generatorClass, type)
+                        .or(() -> construct(generatorClass))
+                        .orElseThrow(() -> noConstructorAssertionError(generatorClass)));
             }
-            if (superClassOrInterface.getSuperclass() != null) {
-                todo.add(superClassOrInterface.getSuperclass());
-            }
-            todo.addAll(Arrays.asList(superClassOrInterface.getInterfaces()));
         }
         return Optional.empty();
 
@@ -95,34 +78,32 @@ public final class GeneratorResolver {
         return Optional.ofNullable(GENERATORS.get(rawType));
     }
 
+    @SuppressWarnings("unchecked")
     private static Optional<Generator<?>> superGenerator(Class<?> rawType) {
-        List<Class<?>> todo = new ArrayList<>();
-        todo.add(rawType);
-        while (!todo.isEmpty()) {
-            Class<?> superClassOrInterface = todo.remove(0);
-            Class<?> generatorClass = SUPER_GENERATORS.get(superClassOrInterface);
+        for (Class<?> superClassOrInterface : ReflectionSupport.superTypes(rawType)) {
+            Class<Generator<?>> generatorClass = (Class<Generator<?>>) SUPER_GENERATORS.get(superClassOrInterface);
             if (generatorClass != null) {
-                try {
-                    return Optional.of(
-                        (Generator<?>) generatorClass.getConstructor(Class.class).newInstance(rawType));
-                } catch (ReflectiveOperationException e) {
-                    try {
-                        return Optional.of(
-                            (Generator<?>) generatorClass.getConstructor().newInstance());
-                    } catch (ReflectiveOperationException f) {
-                        throw new AssertionError(
-                            "Generator class "
-                                + generatorClass.getSimpleName()
-                                + " should have a either a zero argument or a one argument constructor taking the subclass to instantiate");
-                    }
-                }
+                return Optional.of(
+                    construct(generatorClass, rawType)
+                        .or(() -> construct(generatorClass))
+                        .orElseThrow(() -> noConstructorAssertionError(generatorClass)));
             }
-            if (superClassOrInterface.getSuperclass() != null) {
-                todo.add(superClassOrInterface.getSuperclass());
-            }
-            todo.addAll(Arrays.asList(superClassOrInterface.getInterfaces()));
         }
         return Optional.empty();
+    }
+
+    private static AssertionError noConstructorAssertionError(Class<Generator<?>> generatorClass) {
+        return new AssertionError(
+            "Generator class "
+                + generatorClass.getSimpleName()
+                + " should have a either a zero argument or a one argument constructor taking the subclass to instantiate"
+        );
+    }
+
+    public static Generator<?> generatorFor(Type type) throws NoGeneratorFoundException {
+        return GeneratorResolver
+                   .resolve(getRawType(type), Map.of())
+                   .orElseThrow(() -> new NoGeneratorFoundException("for type " + type.toString()));
     }
 
 }

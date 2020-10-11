@@ -16,8 +16,8 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.genji.Support.findAnnotation;
-import static org.genji.Support.getParameterTypes;
+import static org.genji.ReflectionSupport.findAnnotation;
+import static org.genji.ReflectionSupport.getParameterTypes;
 
 public class GenjiProvider implements ArgumentsProvider {
 
