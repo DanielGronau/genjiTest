@@ -1,8 +1,12 @@
 package org.genji;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Repeatable;
 import java.lang.reflect.*;
 import java.util.*;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 final public class ReflectionSupport {
 
@@ -24,7 +28,7 @@ final public class ReflectionSupport {
         Collection<? extends Annotation> annotations,
         Class<?> self) {
         return findAnnotation(annotationClass, annotations)
-                          .orElseGet(() -> self.getAnnotation(annotationClass));
+                   .orElseGet(() -> self.getAnnotation(annotationClass));
     }
 
 
@@ -38,11 +42,11 @@ final public class ReflectionSupport {
 
     public static Class<?> getRawType(Type type) {
         return boxIfNecessary((Class<?>) (type instanceof ParameterizedType
-                        ? ((ParameterizedType) type).getRawType()
-                        : type));
+                                              ? ((ParameterizedType) type).getRawType()
+                                              : type));
     }
 
-    public static <T> Optional<T> construct(Class<T> targetClass, Object ... arguments) {
+    public static <T> Optional<T> construct(Class<T> targetClass, Object... arguments) {
         try {
             Class<?>[] parameters = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
             return Optional.of(targetClass.getConstructor(parameters))
@@ -65,12 +69,12 @@ final public class ReflectionSupport {
 
             @Override
             public boolean hasNext() {
-                return ! todo.isEmpty();
+                return !todo.isEmpty();
             }
 
             @Override
             public Class<?> next() {
-                if (! hasNext()) {
+                if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
                 Class<?> superClassOrInterface = todo.remove(0);
@@ -90,6 +94,77 @@ final public class ReflectionSupport {
             return Array.get(Array.newInstance(targetClass, 1), 0).getClass();
         }
         return targetClass;
+    }
+
+    public static Map<Class<? extends Annotation>, Annotation> methodAnnotations(Method method) {
+        var targetClass = method.getDeclaringClass();
+        var targetPackage = targetClass.getPackage();
+        Map<Class<? extends Annotation>, Annotation> defaultMap =
+            Arrays.stream(targetPackage.getAnnotations())
+                  .collect(toMap(Annotation::getClass, a -> a, (a1, b) -> b));
+        defaultMap.putAll(
+            Arrays.stream(targetClass.getAnnotations())
+                  .collect(toMap(Annotation::getClass, a -> a, (a1, b) -> b)));
+        defaultMap.putAll(
+            Arrays.stream(method.getAnnotations())
+                  .collect(toMap(Annotation::getClass, a -> a, (a1, b) -> b)));
+        return defaultMap;
+    }
+
+    public static List<Map<Class<? extends Annotation>, Annotation>> parameterAnnotations(Method method) {
+        var defaultMap = methodAnnotations(method);
+        return Arrays.stream(method.getParameterAnnotations())
+                     .map(annotations -> Arrays.stream(annotations).collect(
+                         toMap(Annotation::getClass, a -> a, (a1, b) -> b, () -> new HashMap<>(defaultMap))))
+                     .collect(toList());
+    }
+
+    public static <A extends Annotation> List<A> repeatableAnnotationOfType(AnnotatedElement element, Class<A> type) {
+        return Arrays.asList(element.getAnnotationsByType(type));
+    }
+
+
+    //package before class before method
+    public static <A extends Annotation> List<A> repeatableMethodAnnotation(Method targetMethod, Class<A> type) {
+        List<A> result = new ArrayList<>();
+        result.addAll(repeatableAnnotationOfType(targetMethod.getDeclaringClass().getPackage(), type));
+        result.addAll(repeatableAnnotationOfType(targetMethod.getDeclaringClass(), type));
+        result.addAll(repeatableAnnotationOfType(targetMethod, type));
+        return result;
+    }
+
+    public static <A extends Annotation> Optional<A> methodAnnotation(Method method, Class<A> type) {
+        return annotationOfType(method, type)
+                   .or(() -> annotationOfType(method.getDeclaringClass(), type))
+                   .or(() -> annotationOfType(method.getDeclaringClass().getPackage(), type));
+    }
+
+    public static <A extends Annotation> Optional<A> annotationOfType(AnnotatedElement element, Class<A> type) {
+        return Arrays.stream(element.getAnnotationsByType(type)).findFirst();
+    }
+
+    public static <A extends Annotation> List<A> filterRepeatableAnnotation(List<Annotation> annotations, Class<A> type) {
+        var single = annotations.stream().filter(type::isInstance).map(type::cast).collect(toList());
+        if (!single.isEmpty()) {
+            return single;
+        }
+        var annotationsByType = type.getAnnotationsByType(Repeatable.class);
+        if (annotationsByType.length == 1) {
+            var wrapperType = annotationsByType[0].value();
+            return annotations
+                       .stream()
+                       .filter(wrapperType::isInstance)
+                       .map(wrapperType::cast)
+                       .flatMap(ts -> {
+                               try {
+                                   return Arrays.stream((A[]) (wrapperType.getMethod("value").invoke(ts)));
+                               } catch (ReflectiveOperationException e) {
+                                   throw new RuntimeException(e);
+                               }
+                           }
+                       ).collect(toList());
+        }
+        return List.of();
     }
 
 }
