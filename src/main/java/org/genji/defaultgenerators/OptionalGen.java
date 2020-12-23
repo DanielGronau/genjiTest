@@ -3,11 +3,9 @@ package org.genji.defaultgenerators;
 import org.genji.Generator;
 import org.genji.GeneratorResolver;
 import org.genji.ReflectionSupport;
+import org.genji.TypeInfo;
 import org.genji.annotations.OptionalSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -21,10 +19,11 @@ public class OptionalGen implements Generator<Optional<?>> {
     }
 
     @Override
-    public Stream<Optional<?>> generate(Random random, List<Annotation> annotations, Type... types) {
-        OptionalSpec spec = ReflectionSupport.findAnnotation(OptionalSpec.class, annotations, OptionalGen.class);
-        return GeneratorResolver.generatorFor(types[0])
-                                .generate(random, annotations, ReflectionSupport.getParameterTypes(types[0]))
+    public Stream<Optional<?>> generate(Random random, TypeInfo typeInfo) {
+        OptionalSpec spec = ReflectionSupport.findAnnotation(OptionalSpec.class, typeInfo, OptionalGen.class);
+        var typeParameter = typeInfo.getParameterType(0);
+        return GeneratorResolver.generatorFor(typeParameter.getType())
+                                .generate(random, typeParameter)
                                 .map(value -> random.nextDouble() < spec.probabilityForEmpty()
                                         ? Optional.empty()
                                         : Optional.ofNullable(value));

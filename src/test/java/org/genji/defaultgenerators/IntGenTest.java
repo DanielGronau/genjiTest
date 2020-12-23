@@ -1,16 +1,15 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.IntSpec;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class IntGenTest {
 
@@ -19,13 +18,13 @@ class IntGenTest {
     @Test
     void generate() {
         var list = IntGen.INSTANCE
-                       .generate(RANDOM, List.of())
+                       .generate(RANDOM, new TypeInfo(Integer.class))
                        .limit(50)
                        .collect(toList());
 
-        assertTrue(list.stream().anyMatch(i -> i < 0));
-        assertTrue(list.stream().anyMatch(i -> i > 0));
-        assertTrue(list.stream().anyMatch(i -> Math.abs(i) > 100));
+        assertThat(list.stream().anyMatch(i -> i < 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> i > 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> Math.abs(i) > 100)).isTrue();
     }
 
     @Test
@@ -35,11 +34,11 @@ class IntGenTest {
                              .getDeclaredMethod("generate_OneOf")
                              .getAnnotation(IntSpec.class);
         var set = IntGen.INSTANCE
-                       .generate(RANDOM, List.of(intSpec))
+                       .generate(RANDOM, new TypeInfo(Integer.class, Map.of(IntSpec.class, intSpec)))
                        .limit(50)
                        .collect(toSet());
 
-        assertEquals(Set.of(2, 5, 7), set);
+        assertThat(set).containsExactlyInAnyOrder(2, 5, 7);
     }
 
     @Test
@@ -49,13 +48,13 @@ class IntGenTest {
                           .getDeclaredMethod("generate_FromTo")
                           .getAnnotation(IntSpec.class);
         var list = IntGen.INSTANCE
-                      .generate(RANDOM, List.of(intSpec))
+                      .generate(RANDOM, new TypeInfo(Integer.class, Map.of(IntSpec.class, intSpec)))
                       .limit(50)
                       .collect(toList());
 
-        assertTrue(list.stream().allMatch(i -> i >= 3));
-        assertTrue(list.stream().allMatch(i -> i <= 15));
-        assertTrue(list.stream().anyMatch(i -> 5 < i && i < 12));
+        assertThat(list.stream().allMatch(i -> i >= 3)).isTrue();
+        assertThat(list.stream().allMatch(i -> i <= 15)).isTrue();
+        assertThat(list.stream().anyMatch(i -> 5 < i && i < 12)).isTrue();
     }
 
 }

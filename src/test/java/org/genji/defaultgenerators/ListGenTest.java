@@ -1,16 +1,16 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.Size;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static java.util.stream.Collectors.toList;
-import static org.genji.Utils.assertBetween;
-import static org.genji.Utils.getParametrizedType;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ListGenTest {
 
@@ -21,15 +21,15 @@ class ListGenTest {
     void generate() {
         List<List<String>> lists =
             (List) new ListGen()
-                       .generate(RANDOM, List.of(), String.class)
+                       .generate(RANDOM, new TypeInfo(Integer.class, Map.of(), List.of(new TypeInfo(String.class))))
                        .limit(50)
                        .collect(toList());
         for (List<String> list : lists) {
-            assertBetween(list.size(), 0, 20);
+            assertThat(list.size()).isBetween(0, 20);
             for (String s : list) {
-                assertBetween(s.length(), 0, 20);
+                assertThat(s.length()).isBetween(0, 20);
                 for (char c : s.toCharArray())
-                    assertTrue(StringGenTest.DEFAULT_CHARS.contains("" + c));
+                    assertThat(StringGenTest.DEFAULT_CHARS.indexOf("" + c)).isNotEqualTo(-1);
             }
         }
     }
@@ -39,11 +39,11 @@ class ListGenTest {
     void generate_correctListType() {
         List<List<String>> lists =
             (List) new ListGen(LinkedList.class)
-                       .generate(RANDOM, List.of(), String.class)
+                       .generate(RANDOM, new TypeInfo(List.class, Map.of(), List.of(new TypeInfo(String.class))))
                        .limit(2)
                        .collect(toList());
         for (List<String> list : lists) {
-            assertTrue(list instanceof LinkedList);
+            assertThat(list).isInstanceOf(LinkedList.class);
         }
     }
 
@@ -56,15 +56,15 @@ class ListGenTest {
                        .getAnnotation(Size.class);
         List<List<String>> lists =
             (List) new ListGen()
-                       .generate(RANDOM, List.of(size), String.class)
+                       .generate(RANDOM, new TypeInfo(List.class, Map.of(Size.class, size), List.of(new TypeInfo(String.class))))
                        .limit(50)
                        .collect(toList());
         for (List<String> list : lists) {
-            assertBetween(list.size(), 3, 5);
+            assertThat(list).hasSizeBetween(3, 5);
             for (String s : list) {
-                assertBetween(s.length(), 0, 20);
+                assertThat(s.length()).isBetween(0, 20);
                 for (char c : s.toCharArray())
-                    assertTrue(StringGenTest.DEFAULT_CHARS.contains("" + c));
+                    assertThat(StringGenTest.DEFAULT_CHARS.indexOf("" + c)).isNotEqualTo(-1);
             }
         }
     }
@@ -78,17 +78,17 @@ class ListGenTest {
                        .getAnnotation(Size.class);
         List<List<List<String>>> listss =
             (List) new ListGen()
-                       .generate(RANDOM, List.of(size), getParametrizedType(List.class, String.class))
+                       .generate(RANDOM, new TypeInfo(List.class, Map.of(), List.of(new TypeInfo(List.class, Map.of(Size.class, size), List.of(new TypeInfo(String.class))))))
                        .limit(5)
                        .collect(toList());
         for (List<List<String>> lists : listss) {
-            assertBetween(lists.size(), 3, 5);
+            assertThat(lists).hasSizeBetween(0, 20);
             for (List<String> list : lists) {
-                assertBetween(list.size(), 3, 5);
+                assertThat(list).hasSizeBetween(3, 5);
                 for (String s : list) {
-                    assertBetween(s.length(), 0, 20);
+                    assertThat(s.length()).isBetween(0, 20);
                     for (char c : s.toCharArray())
-                        assertTrue(StringGenTest.DEFAULT_CHARS.contains("" + c));
+                        assertThat(StringGenTest.DEFAULT_CHARS.indexOf("" + c)).isNotEqualTo(-1);
                 }
             }
         }

@@ -1,17 +1,15 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.StringSpec;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.genji.Utils.assertBetween;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class StringGenTest {
     private static final Random RANDOM = new Random();
@@ -21,13 +19,13 @@ class StringGenTest {
     @Test
     void generate() {
         var list = StringGen.INSTANCE
-                       .generate(RANDOM, List.of())
+                       .generate(RANDOM, new TypeInfo(String.class))
                        .limit(50)
                        .collect(toList());
         for (String s : list) {
-            assertBetween(s.length(), 0, 20);
+            assertThat(s.length()).isBetween(0, 20);
             for (char c : s.toCharArray())
-                assertTrue(DEFAULT_CHARS.contains("" + c));
+                assertThat(DEFAULT_CHARS.indexOf("" + c)).isNotEqualTo(-1);
         }
     }
 
@@ -38,13 +36,13 @@ class StringGenTest {
                              .getDeclaredMethod("generate_withStringLength")
                              .getAnnotation(StringSpec.class);
         var list = StringGen.INSTANCE
-                       .generate(RANDOM, List.of(stringSpec))
+                       .generate(RANDOM, new TypeInfo(String.class, Map.of(StringSpec.class, stringSpec)))
                        .limit(50)
                        .collect(toList());
         for (String s : list) {
-            assertBetween(s.length(), 3, 6);
+            assertThat(s.length()).isBetween(3, 6);
             for (char c : s.toCharArray())
-                assertTrue(DEFAULT_CHARS.contains("" + c));
+                assertThat(DEFAULT_CHARS.indexOf("" + c)).isNotEqualTo(-1);
         }
     }
 
@@ -55,13 +53,13 @@ class StringGenTest {
                              .getDeclaredMethod("generate_withCharSet")
                              .getAnnotation(StringSpec.class);
         var list = StringGen.INSTANCE
-                       .generate(RANDOM, List.of(stringSpec))
+                       .generate(RANDOM, new TypeInfo(String.class, Map.of(StringSpec.class, stringSpec)))
                        .limit(50)
                        .collect(toList());
         for (String s : list) {
-            assertBetween(s.length(), 0, 20);
+            assertThat(s.length()).isBetween(0, 20);
             for (char c : s.toCharArray())
-                assertTrue("abc".contains("" + c));
+                assertThat("abc".indexOf("" + c)).isNotEqualTo(-1);
         }
     }
 
@@ -72,9 +70,9 @@ class StringGenTest {
                              .getDeclaredMethod("generate_withOneOf")
                              .getAnnotation(StringSpec.class);
         var set = StringGen.INSTANCE
-                      .generate(RANDOM, List.of(stringSpec))
+                      .generate(RANDOM, new TypeInfo(String.class, Map.of(StringSpec.class, stringSpec)))
                       .limit(50)
                       .collect(toSet());
-        assertEquals(Set.of("foo", "bar", "baz"), set);
+        assertThat(set).containsExactlyInAnyOrder("foo", "bar", "baz");
     }
 }

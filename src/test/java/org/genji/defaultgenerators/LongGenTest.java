@@ -1,16 +1,15 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.LongSpec;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LongGenTest {
 
@@ -19,13 +18,13 @@ class LongGenTest {
     @Test
     void generate() {
         var list = LongGen.INSTANCE
-                       .generate(RANDOM, List.of())
+                       .generate(RANDOM, new TypeInfo(Long.class))
                        .limit(50)
                        .collect(toList());
 
-        assertTrue(list.stream().anyMatch(i -> i < 0));
-        assertTrue(list.stream().anyMatch(i -> i > 0));
-        assertTrue(list.stream().anyMatch(i -> Math.abs(i) > 100));
+        assertThat(list.stream().anyMatch(i -> i < 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> i > 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> Math.abs(i) > 100)).isTrue();
     }
 
     @Test
@@ -35,11 +34,11 @@ class LongGenTest {
                              .getDeclaredMethod("generate_OneOf")
                              .getAnnotation(LongSpec.class);
         var set = LongGen.INSTANCE
-                       .generate(RANDOM, List.of(longSpec))
+                       .generate(RANDOM, new TypeInfo(Long.class, Map.of(LongSpec.class, longSpec)))
                        .limit(50)
                        .collect(toSet());
 
-        assertEquals(Set.of(2L, 5L, 700000000000L), set);
+        assertThat(set).containsExactlyInAnyOrder(2L, 5L, 700000000000L);
     }
 
     @Test
@@ -49,13 +48,13 @@ class LongGenTest {
                           .getDeclaredMethod("generate_FromTo")
                           .getAnnotation(LongSpec.class);
         var list = LongGen.INSTANCE
-                      .generate(RANDOM, List.of(longSpec))
+                      .generate(RANDOM, new TypeInfo(Long.class, Map.of(LongSpec.class, longSpec)))
                       .limit(50)
                       .collect(toList());
 
-        assertTrue(list.stream().allMatch(i -> i >= 3L));
-        assertTrue(list.stream().allMatch(i -> i <= 15L));
-        assertTrue(list.stream().anyMatch(i -> 5L < i && i < 12L));
+        assertThat(list.stream().allMatch(i -> i >= 3L)).isTrue();
+        assertThat(list.stream().allMatch(i -> i <= 15L)).isTrue();
+        assertThat(list.stream().anyMatch(i -> 5L < i && i < 12L)).isTrue();
     }
 
 }

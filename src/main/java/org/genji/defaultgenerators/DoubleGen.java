@@ -1,11 +1,9 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.annotations.DoubleSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -20,8 +18,8 @@ public class DoubleGen implements Generator<Double> {
     }
 
     @Override
-    public Stream<Double> generate(Random random, List<Annotation> annotations, Type... types) {
-        DoubleSpec doubleSpec = findAnnotation(DoubleSpec.class, annotations, DoubleGen.class);
+    public Stream<Double> generate(Random random, TypeInfo typeInfo) {
+        DoubleSpec doubleSpec = findAnnotation(DoubleSpec.class, typeInfo, DoubleGen.class);
         double from = doubleSpec.from();
         double to = doubleSpec.to();
         double[] oneOf = doubleSpec.oneOf();

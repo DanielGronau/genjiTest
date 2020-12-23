@@ -1,11 +1,9 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.annotations.ShortSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -20,8 +18,8 @@ public class ShortGen implements Generator<Short> {
     }
 
     @Override
-    public Stream<Short> generate(Random random, List<Annotation> annotations, Type... types) {
-        ShortSpec shortSpec = findAnnotation(ShortSpec.class, annotations, ShortGen.class);
+    public Stream<Short> generate(Random random, TypeInfo typeInfo) {
+        ShortSpec shortSpec = findAnnotation(ShortSpec.class, typeInfo, ShortGen.class);
         short from = shortSpec.from();
         short to = shortSpec.to();
         short[] oneOf = shortSpec.oneOf();

@@ -40,7 +40,12 @@ Of course, in the previous example you could also control the generated values:
 * with the `@StringSpec` annotation, you can determine the length or the used char set, or define a pool of strings to be used (of course, other types have similar annotations)
 * with the `@Custom` annotation, you can replace the built-in generator with your own implementation
 
-You can put the annotations on the scope which is most convenient for you: on class level, method level or (except `@Samples`) on method parameters.
+You can put the annotations on the scope which is most convenient for you: 
+* on package level
+* on class level
+* on method level
+* on method parameters (except `@Samples`)
+* on type parameters of method arguments (except `@Samples`)
 
 # Generic method parameters
 

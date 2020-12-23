@@ -1,13 +1,11 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.annotations.BigIntegerSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -22,8 +20,8 @@ public class BigIntegerGen implements Generator<BigInteger> {
     }
 
     @Override
-    public Stream<BigInteger> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
-        BigIntegerSpec bigIntegerSpec = findAnnotation(BigIntegerSpec.class, annotations, BigIntegerGen.class);
+    public Stream<BigInteger> generate(Random random, TypeInfo typeInfo) {
+        BigIntegerSpec bigIntegerSpec = findAnnotation(BigIntegerSpec.class, typeInfo, BigIntegerGen.class);
         BigInteger from = new BigInteger(bigIntegerSpec.from().replaceAll("_",""));
         BigInteger to = new BigInteger(bigIntegerSpec.to().replaceAll("_",""));
         if (from.compareTo(to) > 0) {

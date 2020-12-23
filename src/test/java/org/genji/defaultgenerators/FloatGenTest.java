@@ -1,16 +1,15 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.FloatSpec;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FloatGenTest {
 
@@ -19,13 +18,13 @@ class FloatGenTest {
     @Test
     void generate() {
         var list = FloatGen.INSTANCE
-                       .generate(RANDOM, List.of())
+                       .generate(RANDOM, new TypeInfo(Float.class))
                        .limit(50)
                        .collect(toList());
 
-        assertTrue(list.stream().anyMatch(i -> i < 0));
-        assertTrue(list.stream().anyMatch(i -> i > 0));
-        assertTrue(list.stream().anyMatch(i -> Math.abs(i) > 100));
+        assertThat(list.stream().anyMatch(i -> i < 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> i > 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> Math.abs(i) > 100)).isTrue();
     }
 
     @Test
@@ -35,11 +34,11 @@ class FloatGenTest {
                             .getDeclaredMethod("generate_OneOf")
                             .getAnnotation(FloatSpec.class);
         var set = FloatGen.INSTANCE
-                      .generate(RANDOM, List.of(floatSpec))
+                      .generate(RANDOM, new TypeInfo(Float.class, Map.of(FloatSpec.class, floatSpec)))
                       .limit(50)
                       .collect(toSet());
 
-        assertEquals(Set.of(2.0F, 5.0F, 7.0F, Float.NEGATIVE_INFINITY, Float.NaN), set);
+        assertThat(set).containsExactlyInAnyOrder(2.0F, 5.0F, 7.0F, Float.NEGATIVE_INFINITY, Float.NaN);
     }
 
     @Test
@@ -49,13 +48,13 @@ class FloatGenTest {
                             .getDeclaredMethod("generate_FromTo")
                             .getAnnotation(FloatSpec.class);
         var list = FloatGen.INSTANCE
-                       .generate(RANDOM, List.of(floatSpec))
+                       .generate(RANDOM, new TypeInfo(Float.class, Map.of(FloatSpec.class, floatSpec)))
                        .limit(50)
                        .collect(toList());
 
-        assertTrue(list.stream().allMatch(i -> i >= 3));
-        assertTrue(list.stream().allMatch(i -> i <= 15));
-        assertTrue(list.stream().anyMatch(i -> 5 < i && i < 12));
+        assertThat(list.stream().allMatch(i -> i >= 3)).isTrue();
+        assertThat(list.stream().allMatch(i -> i <= 15)).isTrue();
+        assertThat(list.stream().anyMatch(i -> 5 < i && i < 12)).isTrue();
     }
 
 }

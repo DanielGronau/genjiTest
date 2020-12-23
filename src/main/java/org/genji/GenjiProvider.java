@@ -20,8 +20,6 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.genji.ReflectionSupport.*;
-import static org.genji.ReflectionSupport.findAnnotation;
-import static org.genji.ReflectionSupport.getParameterTypes;
 
 public class GenjiProvider implements ArgumentsProvider {
 
@@ -31,20 +29,17 @@ public class GenjiProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
         var method = extensionContext.getRequiredTestMethod();
-        var annotations = collectAnnotations(method);
+        var annotations = parameterAnnotations(method);
         var sampleSize = getSampleSize(method);
         var generators = getGenerators(method);
+        var typeInfos = typeInfos(method);
         var iterators =
             IntStream.range(0, generators.size())
                      .mapToObj(i -> generators
                                         .get(i)
                                         .generate(
                                             getRandom(annotations.get(i)),
-                                            List.copyOf(annotations.get(i).values()),
-                                            getParameterTypes(extensionContext
-                                                                  .getRequiredTestMethod()
-                                                                  .getParameters()[i]
-                                                                  .getParameterizedType()))
+                                            typeInfos.get(i))
                                         .limit(sampleSize)
                                         .iterator()).collect(Collectors.toList());
         return IntStream.range(0, sampleSize)
@@ -85,10 +80,6 @@ public class GenjiProvider implements ArgumentsProvider {
                                 .map(Samples::value)
                                 .filter(v -> v > 0)
                                 .orElse(DEFAULT_SAMPLE_SIZE);
-    }
-
-    private static List<Map<Class<? extends Annotation>, Annotation>> collectAnnotations(Method method) {
-        return parameterAnnotations(method);
     }
 
     private static List<Map<Class<?>, Class<?>>> collectCustomGenerators(Method testMethod) {

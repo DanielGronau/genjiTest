@@ -1,17 +1,16 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.BigIntegerSpec;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BigIntegerGenTest {
 
@@ -20,28 +19,28 @@ class BigIntegerGenTest {
     @Test
     void generate() {
         var list = BigIntegerGen.INSTANCE
-                       .generate(RANDOM, List.of())
+                       .generate(RANDOM, new TypeInfo(BigInteger.class))
                        .limit(50)
                        .collect(toList());
 
-        assertTrue(list.stream().anyMatch(i -> i.compareTo(BigInteger.ZERO) < 0));
-        assertTrue(list.stream().anyMatch(i -> i.compareTo(BigInteger.ZERO) > 0));
-        assertTrue(list.stream().anyMatch(i -> i.abs().compareTo(BigInteger.valueOf(10000)) > 0));
+        assertThat(list.stream().anyMatch(i -> i.compareTo(BigInteger.ZERO) < 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> i.compareTo(BigInteger.ZERO) > 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> i.abs().compareTo(BigInteger.valueOf(10000)) > 0)).isTrue();
     }
 
     @Test
     @BigIntegerSpec(oneOf = {"2", "5", "808017424794512875886459904961710757005754368000000000"})
     void generate_OneOf() throws Exception {
         var spec = BigIntegerGenTest.class
-                             .getDeclaredMethod("generate_OneOf")
-                             .getAnnotation(BigIntegerSpec.class);
+                       .getDeclaredMethod("generate_OneOf")
+                       .getAnnotation(BigIntegerSpec.class);
         var set = BigIntegerGen.INSTANCE
-                       .generate(RANDOM, List.of(spec))
-                       .limit(50)
-                       .collect(toSet());
+                      .generate(RANDOM, new TypeInfo(BigInteger.class, Map.of(BigIntegerSpec.class, spec)))
+                      .limit(50)
+                      .collect(toSet());
 
-        assertEquals(Set.of(BigInteger.TWO, BigInteger.valueOf(5),
-            new BigInteger("808017424794512875886459904961710757005754368000000000")), set);
+        assertThat(set).containsExactlyInAnyOrder(BigInteger.TWO, BigInteger.valueOf(5),
+            new BigInteger("808017424794512875886459904961710757005754368000000000"));
     }
 
     @Test
@@ -51,14 +50,14 @@ class BigIntegerGenTest {
                           .getDeclaredMethod("generate_FromTo")
                           .getAnnotation(BigIntegerSpec.class);
         var list = BigIntegerGen.INSTANCE
-                      .generate(RANDOM, List.of(intSpec))
-                      .limit(50)
-                      .collect(toList());
+                       .generate(RANDOM, new TypeInfo(BigInteger.class, Map.of(BigIntegerSpec.class, intSpec)))
+                       .limit(50)
+                       .collect(toList());
 
-        assertTrue(list.stream().allMatch(i -> i.compareTo(BigInteger.valueOf(3)) >= 0));
-        assertTrue(list.stream().allMatch(i -> i.compareTo(BigInteger.valueOf(15)) <= 0));
-        assertTrue(list.stream().anyMatch(i -> i.compareTo(BigInteger.valueOf(5)) >= 0
-                                                   && i.compareTo(BigInteger.valueOf(12)) <= 0));
+        assertThat(list.stream().allMatch(i -> i.compareTo(BigInteger.valueOf(3)) >= 0)).isTrue();
+        assertThat(list.stream().allMatch(i -> i.compareTo(BigInteger.valueOf(15)) <= 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> i.compareTo(BigInteger.valueOf(5)) >= 0
+                                                   && i.compareTo(BigInteger.valueOf(12)) <= 0)).isTrue();
     }
 
 }

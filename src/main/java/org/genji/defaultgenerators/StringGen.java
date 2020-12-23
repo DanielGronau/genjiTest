@@ -1,11 +1,9 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.annotations.StringSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -20,8 +18,8 @@ public class StringGen implements Generator<String> {
     }
 
     @Override
-    public Stream<String> generate(Random random, List<Annotation> annotations, Type... types) {
-        StringSpec spec = findAnnotation(StringSpec.class, annotations, StringGen.class);
+    public Stream<String> generate(Random random, TypeInfo typeInfo) {
+        StringSpec spec = findAnnotation(StringSpec.class, typeInfo, StringGen.class);
 
         int lengthFrom = (int) Math.max(spec.from(), 0);
         int lengthTo = (int) Math.max(spec.to(), lengthFrom);

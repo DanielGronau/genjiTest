@@ -1,11 +1,9 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.annotations.IntSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -20,8 +18,8 @@ public class IntGen implements Generator<Integer> {
     }
 
     @Override
-    public Stream<Integer> generate(Random random, List<Annotation> annotations, Type... types) {
-        IntSpec intSpec = findAnnotation(IntSpec.class, annotations, IntGen.class);
+    public Stream<Integer> generate(Random random, TypeInfo typeInfo) {
+        IntSpec intSpec = findAnnotation(IntSpec.class, typeInfo, IntGen.class);
         int from = intSpec.from();
         int to = intSpec.to();
         int[] oneOf = intSpec.oneOf();

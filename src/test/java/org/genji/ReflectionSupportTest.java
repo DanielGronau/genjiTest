@@ -8,11 +8,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @CharSpec()
 class ReflectionSupportTest {
@@ -28,21 +31,21 @@ class ReflectionSupportTest {
                 .getDeclaredMethod("findAnnotation")
                 .getDeclaredAnnotations());
 
-        assertTrue(ReflectionSupport.findAnnotation(Test.class, annotations).isPresent());
-        assertTrue(ReflectionSupport.findAnnotation(CharSpec.class, annotations).isEmpty());
+        assertThat(ReflectionSupport.findAnnotation(Test.class, annotations)).isPresent();
+        assertThat(ReflectionSupport.findAnnotation(CharSpec.class, annotations).isEmpty());
 
-        assertNotNull(ReflectionSupport.findAnnotation(Test.class, annotations, ReflectionSupportTest.class));
-        assertNotNull(ReflectionSupport.findAnnotation(CharSpec.class, annotations, ReflectionSupportTest.class));
-        assertNull(ReflectionSupport.findAnnotation(IntSpec.class, annotations, ReflectionSupportTest.class));
+        assertThat(ReflectionSupport.findAnnotation(Test.class, annotations, ReflectionSupportTest.class)).isNotNull();
+        assertThat(ReflectionSupport.findAnnotation(CharSpec.class, annotations, ReflectionSupportTest.class)).isNotNull();
+        assertThat(ReflectionSupport.findAnnotation(IntSpec.class, annotations, ReflectionSupportTest.class)).isNull();
     }
 
     @Test
     void getRawType() throws Exception {
         var type = ReflectionSupportTest.class.getDeclaredField("value").getGenericType();
-        assertEquals(Map.class, ReflectionSupport.getRawType(type));
+        assertThat(ReflectionSupport.getRawType(type)).isEqualTo(Map.class);
 
-        assertEquals(Integer.class, ReflectionSupport.getRawType(Integer.class));
-        assertEquals(Integer.class, ReflectionSupport.getRawType(Integer.TYPE));
+        assertThat(ReflectionSupport.getRawType(Integer.class)).isEqualTo(Integer.class);
+        assertThat(ReflectionSupport.getRawType(Integer.TYPE)).isEqualTo(Integer.class);
     }
 
     @Test
@@ -50,33 +53,34 @@ class ReflectionSupportTest {
         var type = ReflectionSupportTest.class.getDeclaredField("value").getGenericType();
         var parameterTypes = ReflectionSupport.getParameterTypes(type);
 
-        assertTrue(parameterTypes[0] instanceof ParameterizedType);
-        assertEquals(Optional.class, ((ParameterizedType) parameterTypes[0]).getRawType());
+        assertThat(parameterTypes[0]).isInstanceOf(ParameterizedType.class);
+        assertThat(((ParameterizedType) parameterTypes[0]).getRawType()).isEqualTo(Optional.class);
 
-        assertTrue(parameterTypes[1] instanceof Class);
-        assertEquals(Date.class, parameterTypes[1]);
+        assertThat(parameterTypes[1])
+            .isInstanceOf(Class.class)
+            .isEqualTo(Date.class);
     }
 
     @Test
     void construct() {
-        var empty = ReflectionSupport.construct(String.class).get();
-        assertEquals("", empty);
-        var string = ReflectionSupport.construct(String.class, new char[]{'h', 'i'}).get();
-        assertEquals("hi", string);
-        var nope = ReflectionSupport.construct(String.class, new Thread());
-        assertTrue(nope.isEmpty());
+        var empty = ReflectionSupport.construct(String.class);
+        assertThat(empty).contains("");
+        var string = ReflectionSupport.construct(String.class, (Object) new char[]{'h', 'i'});
+        assertThat(string).contains("hi");
+        var nope = ReflectionSupport.construct(String.class, new Thread(() -> {}));
+        assertThat(nope).isEmpty();
     }
 
     @Test
     void superTypes() {
         var superLong = StreamSupport.stream(ReflectionSupport.superTypes(long.class).spliterator(), false).collect(Collectors.toSet());
-        assertEquals(Set.of(Long.class, Number.class, Object.class, Serializable.class, Comparable.class), superLong);
+        assertThat(superLong).containsExactlyInAnyOrder(Long.class, Number.class, Object.class, Serializable.class, Comparable.class);
     }
 
     @Test
     void boxIfNecessary() {
-        assertEquals(String.class, ReflectionSupport.boxIfNecessary(String.class));
-        assertEquals(Integer.class, ReflectionSupport.boxIfNecessary(Integer.class));
-        assertEquals(Integer.class, ReflectionSupport.boxIfNecessary(int.class));
+        assertThat(ReflectionSupport.boxIfNecessary(String.class)).isEqualTo(String.class);
+        assertThat(ReflectionSupport.boxIfNecessary(Integer.class)).isEqualTo(Integer.class);
+        assertThat(ReflectionSupport.boxIfNecessary(int.class)).isEqualTo(Integer.class);
     }
 }

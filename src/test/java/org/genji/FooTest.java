@@ -8,19 +8,19 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FooTest {
 
     @GenjiTest
     void appendRule(@Seed(25) String s1, String s2) {
         var appended = s1 + s2;
-        assertEquals(appended.length(), s1.length() + s2.length());
+        assertThat(appended.length()).isEqualTo(s1.length() + s2.length());
     }
 
     @GenjiTest
     void addRule(int i1, Integer i2) {
-        assertEquals(i1 + i2, i2 + i1);
+        assertThat(i1 + i2).isEqualTo(i2 + i1);
     }
 
     @GenjiTest
@@ -28,7 +28,7 @@ public class FooTest {
         List<List<String>> original = List.copyOf(list);
         Collections.reverse(list);
         Collections.reverse(list);
-        assertEquals(list, original);
+        assertThat(list).isEqualTo(original);
     }
 
 }

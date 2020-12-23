@@ -4,6 +4,9 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -31,6 +34,14 @@ final public class ReflectionSupport {
                    .orElseGet(() -> self.getAnnotation(annotationClass));
     }
 
+    public static <T extends Annotation> T findAnnotation(
+        Class<T> annotationClass,
+        TypeInfo typeInfo,
+        Class<?> self) {
+        return Optional.ofNullable(typeInfo.getAnnotations().get(annotationClass))
+                       .map(annotationClass::cast)
+                       .orElseGet(() -> self.getAnnotation(annotationClass));
+    }
 
     public static Type[] getParameterTypes(Type type) {
         if (type instanceof ParameterizedType) {
@@ -165,6 +176,50 @@ final public class ReflectionSupport {
                        ).collect(toList());
         }
         return List.of();
+    }
+
+    public static List<TypeInfo> typeInfos(Method method) {
+        var maps = parameterAnnotations(method);
+        var apts = method.getAnnotatedParameterTypes();
+        return IntStream.range(0, maps.size())
+                        .mapToObj(i -> new TypeInfo(method.getParameterTypes()[i],
+                                maps.get(i),
+                                annotatedActualTypeArguments(apts[i])
+                                      .map(annotatedType -> typeInfo(annotatedType, maps.get(i))).collect(toList())
+
+                            )
+                        )
+                        .collect(Collectors.toList());
+    }
+
+    public static TypeInfo typeInfo(AnnotatedType type, Map<Class<? extends Annotation>, Annotation> parentAnnotations) {
+        var parentCopy = new HashMap<>(parentAnnotations);
+        var annotations = Arrays.stream(type.getAnnotations())
+                                .reduce(parentCopy,
+                                    (map, annotation) -> {
+                                        map.put(annotation.getClass(), annotation);
+                                        return map;
+                                    }, (x, y) -> x);
+        return new TypeInfo(typeToClass(type.getType()), annotations,
+            annotatedActualTypeArguments(type).map(annotatedType -> typeInfo(annotatedType, annotations)).collect(toList())
+        );
+    }
+
+    private static Stream<AnnotatedType> annotatedActualTypeArguments(AnnotatedType type) {
+        if(type instanceof AnnotatedParameterizedType) {
+            return Arrays.stream(((AnnotatedParameterizedType) type).getAnnotatedActualTypeArguments());
+        }
+        return Stream.empty();
+    }
+
+    public static Class<?> typeToClass(Type type) {
+        if (type instanceof Class) {
+            return (Class<?>) type;
+        }
+        if (type instanceof ParameterizedType) {
+            return typeToClass(((ParameterizedType) type).getRawType());
+        }
+        throw new IllegalArgumentException();
     }
 
 }

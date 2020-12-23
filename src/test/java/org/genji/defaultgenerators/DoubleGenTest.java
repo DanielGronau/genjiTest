@@ -1,17 +1,15 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.DoubleSpec;
-import org.genji.annotations.IntSpec;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class DoubleGenTest {
 
@@ -20,13 +18,13 @@ class DoubleGenTest {
     @Test
     void generate() {
         var list = DoubleGen.INSTANCE
-                       .generate(RANDOM, List.of())
+                       .generate(RANDOM, new TypeInfo(Double.class))
                        .limit(50)
                        .collect(toList());
 
-        assertTrue(list.stream().anyMatch(i -> i < 0));
-        assertTrue(list.stream().anyMatch(i -> i > 0));
-        assertTrue(list.stream().anyMatch(i -> Math.abs(i) > 100));
+        assertThat(list.stream().anyMatch(i -> i < 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> i > 0)).isTrue();
+        assertThat(list.stream().anyMatch(i -> Math.abs(i) > 100)).isTrue();
     }
 
     @Test
@@ -36,11 +34,11 @@ class DoubleGenTest {
                              .getDeclaredMethod("generate_OneOf")
                              .getAnnotation(DoubleSpec.class);
         var set = DoubleGen.INSTANCE
-                       .generate(RANDOM, List.of(doubleSpec))
+                       .generate(RANDOM, new TypeInfo(Double.class, Map.of(DoubleSpec.class, doubleSpec)))
                        .limit(50)
                        .collect(toSet());
 
-        assertEquals(Set.of(2.0, 5.0, 7.0, Double.NEGATIVE_INFINITY, Double.NaN), set);
+        assertThat(set).containsExactlyInAnyOrder(2.0, 5.0, 7.0, Double.NEGATIVE_INFINITY, Double.NaN);
     }
 
     @Test
@@ -50,13 +48,13 @@ class DoubleGenTest {
                           .getDeclaredMethod("generate_FromTo")
                           .getAnnotation(DoubleSpec.class);
         var list = DoubleGen.INSTANCE
-                      .generate(RANDOM, List.of(doubleSpec))
+                      .generate(RANDOM, new TypeInfo(Double.class, Map.of(DoubleSpec.class, doubleSpec)))
                       .limit(50)
                       .collect(toList());
 
-        assertTrue(list.stream().allMatch(i -> i >= 3));
-        assertTrue(list.stream().allMatch(i -> i <= 15));
-        assertTrue(list.stream().anyMatch(i -> 5 < i && i < 12));
+        assertThat(list.stream().allMatch(i -> i >= 3)).isTrue();
+        assertThat(list.stream().allMatch(i -> i <= 15)).isTrue();
+        assertThat(list.stream().anyMatch(i -> 5 < i && i < 12)).isTrue();
     }
 
 }

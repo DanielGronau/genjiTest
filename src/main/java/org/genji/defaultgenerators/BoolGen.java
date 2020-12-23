@@ -1,10 +1,8 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -16,7 +14,7 @@ public class BoolGen implements Generator<Boolean> {
     }
 
     @Override
-    public Stream<Boolean> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
+    public Stream<Boolean> generate(Random random, TypeInfo typeInfo) {
         return Stream.generate(random::nextBoolean);
     }
 }

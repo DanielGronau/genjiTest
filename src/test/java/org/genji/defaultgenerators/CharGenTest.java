@@ -1,16 +1,15 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.CharSpec;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CharGenTest {
 
@@ -19,11 +18,11 @@ class CharGenTest {
     @Test
     void generate() {
         var list  = CharGen.INSTANCE
-                       .generate(RANDOM, List.of())
+                       .generate(RANDOM, new TypeInfo(Character.class))
                        .limit(50)
                        .collect(toList());
         for (char c : list) {
-            assertTrue(StringGenTest.DEFAULT_CHARS.contains("" + c));
+            assertThat(StringGenTest.DEFAULT_CHARS.indexOf("" + c)).isNotEqualTo(-1);
         }
     }
 
@@ -34,9 +33,9 @@ class CharGenTest {
                            .getDeclaredMethod("generate_charSet")
                            .getAnnotation(CharSpec.class);
         var set = CharGen.INSTANCE
-                      .generate(RANDOM, List.of(charSpec))
+                      .generate(RANDOM, new TypeInfo(Character.class, Map.of(CharSpec.class, charSpec)))
                       .limit(50)
                       .collect(toSet());
-        assertEquals(Set.of('x', 'y', 'z'), set);
+        assertThat(set).containsExactlyInAnyOrder('x', 'y', 'z');
     }
 }

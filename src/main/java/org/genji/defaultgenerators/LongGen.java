@@ -1,11 +1,9 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.annotations.LongSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -20,8 +18,8 @@ public class LongGen implements Generator<Long> {
     }
 
     @Override
-    public Stream<Long> generate(Random random, List<Annotation> annotations, Type... types) {
-        LongSpec longSpec = findAnnotation(LongSpec.class, annotations, LongGen.class);
+    public Stream<Long> generate(Random random, TypeInfo typeInfo) {
+        LongSpec longSpec = findAnnotation(LongSpec.class, typeInfo, LongGen.class);
         long from = longSpec.from();
         long to = longSpec.to();
         long[] oneOf = longSpec.oneOf();

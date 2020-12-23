@@ -5,9 +5,9 @@ import org.genji.Generator;
 public class WithNullGen {
 
     public static <T> Generator<T> withNulls(double probability, Generator<T> source) {
-        return (random, annotations, types) ->
+        return (random, typeInfo) ->
                    source
-                       .generate(random, annotations, types)
+                       .generate(random, typeInfo)
                        .map(t -> random.nextDouble() < probability ? null : t);
     }
 }

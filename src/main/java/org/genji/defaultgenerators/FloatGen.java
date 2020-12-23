@@ -1,11 +1,9 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.annotations.FloatSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -20,8 +18,8 @@ public class FloatGen implements Generator<Float> {
     }
 
     @Override
-    public Stream<Float> generate(Random random, List<Annotation> annotations, Type... types) {
-        FloatSpec floatSpec = findAnnotation(FloatSpec.class, annotations, FloatGen.class);
+    public Stream<Float> generate(Random random, TypeInfo typeInfo) {
+        FloatSpec floatSpec = findAnnotation(FloatSpec.class, typeInfo, FloatGen.class);
         float from = floatSpec.from();
         float to = floatSpec.to();
         float[] oneOf = floatSpec.oneOf();

@@ -1,11 +1,9 @@
 package org.genji.defaultgenerators;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.annotations.ByteSpec;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -20,8 +18,8 @@ public class ByteGen implements Generator<Byte> {
     }
 
     @Override
-    public Stream<Byte> generate(Random random, List<Annotation> annotations, Type... types) {
-        ByteSpec byteSpec = findAnnotation(ByteSpec.class, annotations, ByteGen.class);
+    public Stream<Byte> generate(Random random, TypeInfo typeInfo) {
+        ByteSpec byteSpec = findAnnotation(ByteSpec.class, typeInfo, ByteGen.class);
         byte from = byteSpec.from();
         byte to = byteSpec.to();
         byte[] oneOf = byteSpec.oneOf();

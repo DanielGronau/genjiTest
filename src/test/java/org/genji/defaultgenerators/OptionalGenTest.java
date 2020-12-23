@@ -1,18 +1,17 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.genji.annotations.OptionalSpec;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.genji.Utils.assertBetween;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class OptionalGenTest {
 
@@ -23,16 +22,16 @@ class OptionalGenTest {
     void generate() {
         List<Optional<String>> lists =
             (List) OptionalGen.INSTANCE
-                       .generate(RANDOM, List.of(), String.class)
+                       .generate(RANDOM, new TypeInfo(Optional.class, Map.of(), List.of(new TypeInfo(String.class))))
                        .limit(50)
                        .collect(toList());
 
-        assertTrue(lists.contains(Optional.<String>empty()));
+        assertThat(lists).contains(Optional.<String>empty());
         for (Optional<String> optional : lists) {
             optional.ifPresent(s -> {
-                assertBetween(s.length(), 0, 20);
+                assertThat(s.length()).isBetween(0, 20);
                 for (char c : s.toCharArray())
-                    assertTrue(StringGenTest.DEFAULT_CHARS.contains("" + c));
+                    assertThat(StringGenTest.DEFAULT_CHARS.indexOf("" + c)).isNotEqualTo(-1);
             });
         }
     }
@@ -45,11 +44,11 @@ class OptionalGenTest {
                           .getAnnotation(OptionalSpec.class);
         var set =
             OptionalGen.INSTANCE
-                       .generate(RANDOM, List.of(optionalSpec), String.class)
+                       .generate(RANDOM, new TypeInfo(Optional.class, Map.of(OptionalSpec.class, optionalSpec), List.of(new TypeInfo(String.class))))
                        .limit(50)
                        .collect(toSet());
 
-        assertEquals(Set.of(Optional.empty()), set);
+        assertThat(set).containsExactly(Optional.empty());
     }
 
 }

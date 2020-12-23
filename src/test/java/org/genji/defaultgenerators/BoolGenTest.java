@@ -1,13 +1,12 @@
 package org.genji.defaultgenerators;
 
+import org.genji.TypeInfo;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BoolGenTest {
 
@@ -15,7 +14,7 @@ public class BoolGenTest {
 
     @Test
     void generate() {
-        var set = BoolGen.INSTANCE.generate(RANDOM, List.of()).limit(50).collect(Collectors.toSet());
-        assertEquals(Set.of(true, false), set);
+        var set = BoolGen.INSTANCE.generate(RANDOM, new TypeInfo(Boolean.class)).limit(50).collect(Collectors.toSet());
+        assertThat(set).containsExactlyInAnyOrder(true, false);
     }
 }

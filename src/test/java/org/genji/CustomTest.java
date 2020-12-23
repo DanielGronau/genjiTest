@@ -3,13 +3,10 @@ package org.genji;
 import org.genji.annotations.Custom;
 import org.genji.annotations.GenjiTest;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Custom(target = Integer.class, generator = CustomTest.FortyTwo.class)
 @Custom(target = String.class, generator = CustomTest.Foo.class)
@@ -20,9 +17,9 @@ public class CustomTest {
         int a,
         @Custom(target = Integer.class, generator = CustomTest.TwentyThree.class) Integer b,
         String c) {
-        assertEquals(42, a);
-        assertEquals(23, b);
-        assertEquals("foo", c);
+        assertThat(a).isEqualTo(42);
+        assertThat(b).isEqualTo(23);
+        assertThat(c).isEqualTo("foo");
     }
 
     @GenjiTest
@@ -35,16 +32,16 @@ public class CustomTest {
         @Custom(target = Integer.class, generator = CustomTest.FortyTwo.class)
         @Custom(target = String.class, generator = CustomTest.Foo.class) String d
     ) {
-        assertEquals(23, a);
-        assertEquals(19, b);
-        assertEquals("bar", c);
-        assertEquals("foo", d);
+        assertThat(a).isEqualTo(23);
+        assertThat(b).isEqualTo(19);
+        assertThat(c).isEqualTo("bar");
+        assertThat(d).isEqualTo("foo");
     }
 
     public static class FortyTwo implements Generator<Integer> {
 
         @Override
-        public Stream<Integer> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
+        public Stream<Integer> generate(Random random, TypeInfo typeInfo) {
             return Stream.generate(() -> 42);
         }
     }
@@ -52,7 +49,7 @@ public class CustomTest {
     public static class TwentyThree implements Generator<Integer> {
 
         @Override
-        public Stream<Integer> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
+        public Stream<Integer> generate(Random random, TypeInfo typeInfo) {
             return Stream.generate(() -> 23);
         }
     }
@@ -60,7 +57,7 @@ public class CustomTest {
     public static class Nineteen implements Generator<Integer> {
 
         @Override
-        public Stream<Integer> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
+        public Stream<Integer> generate(Random random, TypeInfo typeInfo) {
             return Stream.generate(() -> 19);
         }
     }
@@ -68,7 +65,7 @@ public class CustomTest {
     public static class Foo implements Generator<String> {
 
         @Override
-        public Stream<String> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
+        public Stream<String> generate(Random random, TypeInfo typeInfo) {
             return Stream.generate(() -> "foo");
         }
     }
@@ -76,7 +73,7 @@ public class CustomTest {
     public static class Bar implements Generator<String> {
 
         @Override
-        public Stream<String> generate(Random random, List<Annotation> annotations, Type... parameterTypes) {
+        public Stream<String> generate(Random random,TypeInfo typeInfo) {
             return Stream.generate(() -> "bar");
         }
     }
