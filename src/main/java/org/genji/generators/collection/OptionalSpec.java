@@ -1,4 +1,4 @@
-package org.genji.generators.values;
+package org.genji.generators.collection;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

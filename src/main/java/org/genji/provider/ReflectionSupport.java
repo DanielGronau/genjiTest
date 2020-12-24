@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-final public class ReflectionSupport {
+public final class ReflectionSupport {
 
     private ReflectionSupport() {
     }
@@ -114,13 +114,13 @@ final public class ReflectionSupport {
         var targetPackage = targetClass.getPackage();
         Map<Class<? extends Annotation>, Annotation> defaultMap =
             Arrays.stream(targetPackage.getAnnotations())
-                  .collect(toMap(Annotation::getClass, a -> a, (a1, b) -> b));
+                  .collect(toMap(Annotation::annotationType, a -> a, (a1, b) -> b));
         defaultMap.putAll(
             Arrays.stream(targetClass.getAnnotations())
-                  .collect(toMap(Annotation::getClass, a -> a, (a1, b) -> b)));
+                  .collect(toMap(Annotation::annotationType, a -> a, (a1, b) -> b)));
         defaultMap.putAll(
             Arrays.stream(method.getAnnotations())
-                  .collect(toMap(Annotation::getClass, a -> a, (a1, b) -> b)));
+                  .collect(toMap(Annotation::annotationType, a -> a, (a1, b) -> b)));
         return defaultMap;
     }
 
@@ -128,7 +128,7 @@ final public class ReflectionSupport {
         var defaultMap = methodAnnotations(method);
         return Arrays.stream(method.getParameterAnnotations())
                      .map(annotations -> Arrays.stream(annotations).collect(
-                         toMap(Annotation::getClass, a -> a, (a1, b) -> b, () -> new HashMap<>(defaultMap))))
+                         toMap(Annotation::annotationType, a -> a, (a1, b) -> b, () -> new HashMap<>(defaultMap))))
                      .collect(toList());
     }
 
@@ -199,7 +199,7 @@ final public class ReflectionSupport {
         var annotations = Arrays.stream(type.getAnnotations())
                                 .reduce(parentCopy,
                                     (map, annotation) -> {
-                                        map.put(annotation.getClass(), annotation);
+                                        map.put(annotation.annotationType(), annotation);
                                         return map;
                                     }, (x, y) -> x);
         return new TypeInfo(typeToClass(type.getType()), annotations,

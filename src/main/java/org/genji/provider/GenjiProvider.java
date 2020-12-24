@@ -9,6 +9,8 @@ import org.genji.generators.WithNullGen;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -24,11 +26,13 @@ import static org.genji.provider.ReflectionSupport.*;
 
 public class GenjiProvider implements ArgumentsProvider {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenjiProvider.class);
     private static final int DEFAULT_SAMPLE_SIZE = 20;
     private static final Random RANDOM = new Random();
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+        LOGGER.debug("providing arguments: {}", extensionContext);
         var method = extensionContext.getRequiredTestMethod();
         var annotations = parameterAnnotations(method);
         var sampleSize = getSampleSize(method);
@@ -61,7 +65,7 @@ public class GenjiProvider implements ArgumentsProvider {
             IntStream.range(0, method.getParameterCount())
                      .mapToObj(i -> {
                          Parameter parameter = method.getParameters()[i];
-                         Map<Class<?>, Class<?>> customMap = customGenerators.get(i);
+                         Map<Class<?>, CustomGeneratorInfo> customMap = customGenerators.get(i);
                          Generator<?> generator = GeneratorResolver.resolve(parameter.getType(), customMap).orElseThrow(
                              () -> new NoGeneratorFoundException("for " + parameter));
                          return findAnnotation(
@@ -83,20 +87,35 @@ public class GenjiProvider implements ArgumentsProvider {
                                 .orElse(DEFAULT_SAMPLE_SIZE);
     }
 
-    private static List<Map<Class<?>, Class<?>>> collectCustomGenerators(Method testMethod) {
+    private static List<Map<Class<?>, CustomGeneratorInfo>> collectCustomGenerators(Method testMethod) {
         var defaultMap = repeatableMethodAnnotation(testMethod, Custom.class)
                              .stream()
-                             .collect(toMap(Custom::target, Custom::generator, (a, b) -> b));
+                             .collect(toMap(Custom::target, CustomGeneratorInfo::new, (a, b) -> b));
         return Arrays.stream(testMethod.getParameterAnnotations())
                      .map(annotations -> filterRepeatableAnnotation(Arrays.asList(annotations), Custom.class)
                                              .stream()
                                              .collect(toMap(
                                                  Custom::target,
-                                                 Custom::generator,
+                                                 CustomGeneratorInfo::new,
                                                  (a1, b) -> b,
                                                  () -> new HashMap<>(defaultMap))))
                      .collect(toList());
 
+    }
+
+    static class CustomGeneratorInfo {
+        final Class<Generator<?>> generatorClass;
+        final String[] arguments;
+
+        @SuppressWarnings("unchecked")
+        private CustomGeneratorInfo(Custom customAnnotation) {
+            this((Class<Generator<?>>) customAnnotation.generator(), customAnnotation.arguments());
+        }
+
+        private CustomGeneratorInfo(Class<Generator<?>> generatorClass, String[] arguments) {
+            this.generatorClass = generatorClass;
+            this.arguments = arguments;
+        }
     }
 
 }

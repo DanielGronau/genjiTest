@@ -1,10 +1,9 @@
-package org.genji;
+package org.genji.provider;
 
 import org.genji.generators.primitives.CharSpec;
 import org.genji.generators.primitives.DoubleSpec;
 import org.genji.generators.primitives.FloatSpec;
 import org.genji.generators.primitives.IntSpec;
-import org.genji.provider.ReflectionSupport;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;

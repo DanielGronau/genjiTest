@@ -11,4 +11,5 @@ import java.lang.annotation.*;
 public @interface Custom {
     Class<?> target();
     Class<?> generator();
+    String[] arguments() default {};
 }

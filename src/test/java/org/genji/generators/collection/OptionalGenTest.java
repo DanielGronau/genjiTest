@@ -1,7 +1,6 @@
 package org.genji.generators.collection;
 
 import org.genji.TypeInfo;
-import org.genji.generators.values.OptionalSpec;
 import org.genji.generators.values.StringGenTest;
 import org.junit.jupiter.api.Test;
 
