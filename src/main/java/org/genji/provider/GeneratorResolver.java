@@ -3,6 +3,7 @@ package org.genji.provider;
 import org.genji.Generator;
 import org.genji.generators.collection.ListGen;
 import org.genji.generators.collection.OptionalGen;
+import org.genji.generators.collection.SetGen;
 import org.genji.generators.primitives.*;
 import org.genji.generators.values.BigIntegerGen;
 import org.genji.generators.values.EnumGen;
@@ -11,10 +12,7 @@ import org.genji.generators.values.UuidGen;
 
 import java.lang.reflect.Type;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
@@ -62,7 +60,8 @@ public final class GeneratorResolver {
     private static final Map<Class<?>, Class<?>> SUPER_GENERATORS =
         ofEntries(
             entry(Enum.class, EnumGen.class),
-            entry(List.class, ListGen.class)
+            entry(List.class, ListGen.class),
+            entry(Set.class, SetGen.class)
         );
 
     public static Optional<Generator<?>> resolve(Class<?> rawType, Map<Class<?>, GenjiProvider.CustomGeneratorInfo> customGenerators) {
@@ -84,7 +83,6 @@ public final class GeneratorResolver {
             }
         }
         return Optional.empty();
-
     }
 
     private static Optional<Generator<?>> standardGenerator(Class<?> rawType) {
@@ -108,21 +106,21 @@ public final class GeneratorResolver {
     private static AssertionError noConstructorAssertionError(Class<Generator<?>> generatorClass) {
         return new AssertionError(
             "Generator class "
-                + generatorClass.getSimpleName()
+                + generatorClass.getName()
                 + " should have a either a zero argument or a one argument constructor taking the subclass to instantiate"
         );
     }
 
     private static AssertionError noCustomConstructorAssertionError(Class<Generator<?>> generatorClass) {
         return new AssertionError(
-            "Generator class "
-                + generatorClass.getSimpleName()
+            "Custom generator class "
+                + generatorClass.getName()
                 + " should have a either a one argument constructor taking the subclass to instantiate"
                 + " or a constructor matching the number of given String arguments (defaults to 0)"
         );
     }
 
-    public static Generator<?> generatorFor(Type type) throws NoGeneratorFoundException {
+    public static Generator<?> generatorFor(Type type) {
         return GeneratorResolver
                    .resolve(getRawType(type), Map.of())
                    .orElseThrow(() -> new NoGeneratorFoundException("for type " + type.toString()));

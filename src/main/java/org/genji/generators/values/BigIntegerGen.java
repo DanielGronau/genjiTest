@@ -21,13 +21,13 @@ public class BigIntegerGen implements Generator<BigInteger> {
     @Override
     public Stream<BigInteger> generate(Random random, TypeInfo typeInfo) {
         BigIntegerSpec bigIntegerSpec = findAnnotation(BigIntegerSpec.class, typeInfo, BigIntegerGen.class);
-        BigInteger from = new BigInteger(bigIntegerSpec.from().replaceAll("_",""));
-        BigInteger to = new BigInteger(bigIntegerSpec.to().replaceAll("_",""));
+        BigInteger from = new BigInteger(bigIntegerSpec.from().replace("_",""));
+        BigInteger to = new BigInteger(bigIntegerSpec.to().replace("_",""));
         if (from.compareTo(to) > 0) {
             throw new IllegalArgumentException("Invalid BigInteger range, from (" + from + ") > to(" + to + ")");
         }
         BigInteger[] oneOf = Arrays.stream(bigIntegerSpec.oneOf())
-                                   .map(s -> s.replaceAll("_",""))
+                                   .map(s -> s.replace("_",""))
                                    .map(BigInteger::new).toArray(BigInteger[]::new);
         return oneOf.length == 0
                    ? Stream.generate(() -> generateBetween(random, from, to))

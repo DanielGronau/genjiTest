@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BoolGenTest {
+class BoolGenTest {
 
     private static final Random RANDOM = new Random();
 

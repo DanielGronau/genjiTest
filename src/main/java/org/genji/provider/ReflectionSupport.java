@@ -67,7 +67,7 @@ public final class ReflectionSupport {
                                try {
                                    return c.newInstance(arguments);
                                } catch (ReflectiveOperationException e) {
-                                   throw new RuntimeException(e);
+                                   throw new AssertionError("Unexpected exception while calling constructor of " + c.getName(), e);
                                }
                            });
         } catch (NoSuchMethodException e) {
@@ -156,6 +156,7 @@ public final class ReflectionSupport {
         return Arrays.stream(element.getAnnotationsByType(type)).findFirst();
     }
 
+    @SuppressWarnings("unchecked")
     public static <A extends Annotation> List<A> filterRepeatableAnnotation(List<Annotation> annotations, Class<A> type) {
         var single = annotations.stream().filter(type::isInstance).map(type::cast).collect(toList());
         if (!single.isEmpty()) {
@@ -172,7 +173,7 @@ public final class ReflectionSupport {
                                try {
                                    return Arrays.stream((A[]) (wrapperType.getMethod("value").invoke(ts)));
                                } catch (ReflectiveOperationException e) {
-                                   throw new RuntimeException(e);
+                                   throw new AssertionError("Unexpected problem in repeatable annotation " + ts.annotationType(), e);
                                }
                            }
                        ).collect(toList());

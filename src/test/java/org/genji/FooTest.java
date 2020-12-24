@@ -14,7 +14,7 @@ public class FooTest {
     @GenjiTest
     void appendRule(@Seed(25) String s1, String s2) {
         var appended = s1 + s2;
-        assertThat(appended.length()).isEqualTo(s1.length() + s2.length());
+        assertThat(appended).hasSize(s1.length() + s2.length());
     }
 
     @GenjiTest

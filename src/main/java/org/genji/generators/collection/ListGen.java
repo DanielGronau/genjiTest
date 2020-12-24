@@ -34,7 +34,7 @@ public class ListGen implements Generator<List<?>> {
         return Stream.generate(
             () -> GeneratorResolver.generatorFor(typeParameter.getType())
                                    .generate(random, typeParameter)
-                                   .limit(random.nextInt(sizeTo - sizeFrom) + sizeFrom)
+                                   .limit(random.nextInt(sizeTo - sizeFrom) + (long)sizeFrom)
                                    .reduce(getList(), ListGen::add, (x, y) -> x));
     }
 
@@ -43,7 +43,7 @@ public class ListGen implements Generator<List<?>> {
             Class<?> listType = listClass.isInterface() ? ArrayList.class : listClass;
             return (List<?>) listType.getConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("List type " + listClass + "has no default constructor", e);
         }
     }
 

@@ -32,7 +32,7 @@ class ReflectionSupportTest {
                 .getDeclaredAnnotations());
 
         assertThat(ReflectionSupport.findAnnotation(Test.class, annotations)).isPresent();
-        assertThat(ReflectionSupport.findAnnotation(CharSpec.class, annotations).isEmpty());
+        assertThat(ReflectionSupport.findAnnotation(CharSpec.class, annotations)).isEmpty();
 
         assertThat(ReflectionSupport.findAnnotation(Test.class, annotations, ReflectionSupportTest.class)).isNotNull();
         assertThat(ReflectionSupport.findAnnotation(CharSpec.class, annotations, ReflectionSupportTest.class)).isNotNull();
