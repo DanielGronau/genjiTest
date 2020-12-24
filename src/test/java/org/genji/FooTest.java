@@ -1,8 +1,7 @@
 package org.genji;
 
-import org.genji.annotations.GenjiTest;
 import org.genji.annotations.Seed;
-import org.genji.annotations.Size;
+import org.genji.generators.collection.Size;
 
 import java.util.Collections;
 import java.util.LinkedList;

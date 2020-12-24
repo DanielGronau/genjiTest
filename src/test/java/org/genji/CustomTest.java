@@ -1,7 +1,6 @@
 package org.genji;
 
 import org.genji.annotations.Custom;
-import org.genji.annotations.GenjiTest;
 
 import java.util.Random;
 import java.util.stream.Stream;
