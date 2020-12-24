@@ -19,7 +19,16 @@ At the moment, the implementation of shrinking (finding the "smallest" failing e
 is not planned. While it certainly is a useful feature, it doesn't fit well with the
 light-weight approach and tight JUnit integration of the project.   
 
-# Minimal Example
+Please note that GenjiTest is written in Java 11, and will not work in older Java versions.
+
+## How does it work?
+
+* The mechanism for integration with JUnit 5 is described in [JUnit 5 Documentation - Parameterized Tests](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests).
+* The `@GenjiTest` annotation is just a shortcut to mark a method as a parametrized JUnit 5 test with `GenjiProvider` as `ArgumentsProvider`.
+* While `ArgumentsProvider` classes usually produce specialized data, `GenjiProvider` tries to make the best out of the method parameters it finds. There are predefined generators for many Java classes, and it is also possible to provide custom generators.
+* The generators can be configured with annotations.
+
+## Minimal Example
 
 ```
 @GenjiTest
@@ -31,14 +40,14 @@ void appendRule(String s1, String s2) {
 
 In this example, the `appendRule` method will be called several times with different random `String`s, using some default values for size, length and kind of data etc. 
 
-# Fine-grained control
+## Fine-grained control
 
 Of course, in the previous example you could also control the generated values:
 
 * with the `@Samples` annotation, you can specify how often the method is invoked
 * with the `@WithNulls` annotation, there are sometimes null values included
-* with the `@StringSpec` annotation, you can determine the length or the used char set, or define a pool of strings to be used (of course, other types have similar annotations)
-* with the `@Custom` annotation, you can replace the built-in generator with your own implementation
+* with the `@StringSpec` annotation, you can determine the length or used char set, or define a pool of strings to be used (of course, other types have similar annotations)
+* with the `@Custom` annotation, you can replace a built-in generator with your own implementation
 
 You can put the annotations on the scope which is most convenient for you: 
 * on package level
@@ -47,13 +56,13 @@ You can put the annotations on the scope which is most convenient for you:
 * on method parameters (except `@Samples`)
 * on type parameters of method arguments (except `@Samples`)
 
-# Generic method parameters
+## Generic method parameters
 
 GenjiTest will try to assemble generators for generic method parameters as well. E.g. 
 there are built-in generators for `List` and `String`, hence method parameters of type
  `List<String>` or `List<List<String>>` will work out of the box.
-
-# Similar but mature projects
+ 
+## Similar but mature projects
 
 - [jkwik](https://github.com/jlink/jqwik)
 - [junit-quickcheck](https://github.com/pholser/junit-quickcheck)
