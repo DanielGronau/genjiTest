@@ -61,6 +61,7 @@ public class GenjiProvider implements ArgumentsProvider {
 
     private static List<? extends Generator<?>> getGenerators(Method method) {
         var customGenerators = collectCustomGenerators(method);
+        var withNullsOnMethod = methodAnnotation(method, WithNulls.class);
         return
             IntStream.range(0, method.getParameterCount())
                      .mapToObj(i -> {
@@ -68,23 +69,23 @@ public class GenjiProvider implements ArgumentsProvider {
                          Map<Class<?>, CustomGeneratorInfo> customMap = customGenerators.get(i);
                          Generator<?> generator = GeneratorResolver.resolve(parameter.getType(), customMap).orElseThrow(
                              () -> new NoGeneratorFoundException("for " + parameter));
-                         return findAnnotation(
-                             WithNulls.class,
-                             List.of(method.getParameterAnnotations()[i]))
-                                    .<Generator<?>>map(
-                                        withNulls -> WithNullGen
-                                                         .withNulls(withNulls.probability(), generator))
-                                    .orElse(generator);
-
+                         return parameter.getType().isPrimitive()
+                                    ? generator //don't apply WithNulls on primitives
+                                    : findAnnotation(WithNulls.class, List.of(method.getParameterAnnotations()[i]))
+                                          .or(() -> withNullsOnMethod)
+                                          .<Generator<?>>map(
+                                              withNulls -> WithNullGen
+                                                               .withNulls(withNulls.probability(), generator))
+                                          .orElse(generator);
                      })
                      .collect(toList());
     }
 
     private static int getSampleSize(Method method) {
         return methodAnnotation(method, Samples.class)
-                                .map(Samples::value)
-                                .filter(v -> v > 0)
-                                .orElse(GenjiProvider.class.getAnnotation(Samples.class).value());
+                   .map(Samples::value)
+                   .filter(v -> v > 0)
+                   .orElse(GenjiProvider.class.getAnnotation(Samples.class).value());
     }
 
     private static List<Map<Class<?>, CustomGeneratorInfo>> collectCustomGenerators(Method testMethod) {

@@ -22,7 +22,7 @@ void testMethod(String a) {
 
 ## @Samples
 
-Allowed on: Module, Package, Class, Methode
+Allowed on: Module, Package, Class, Method
 
 <table>
 <tr>
@@ -95,6 +95,8 @@ class Test {
   
 ## @WithNulls
 
+Allowed on: Module, Package, Class, Method, Parameter
+
 <table>
 <tr>
 <th> Element </th>
@@ -112,4 +114,9 @@ class Test {
 </table>
   
 All built-in generators will provide only non-null values. Using the `@WithNulls` annotation, a certain percentage of
-nulls can be inserted in the generated samples. The probability value will be clamped to the range 0.0 (no null) to 1.0 (all nulls), and defaults to 0.05, which means that about 1 in 20 values will be a `null` value.  
+nulls can be inserted in the generated samples.
+The probability value will be clamped to the range 0.0 (no `null`) to 1.0 (all `null`s), and defaults to 0.05,
+which means that about 1 in 20 values will be a `null` value.
+Arguments of primitive types will not be affected by `@WithNulls`.
+
+At the moment, `@WithNulls` is not permitted for method parameter generics. 
