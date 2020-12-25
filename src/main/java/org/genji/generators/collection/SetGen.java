@@ -4,7 +4,9 @@ import org.genji.Generator;
 import org.genji.TypeInfo;
 import org.genji.provider.GeneratorResolver;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.genji.provider.ReflectionSupport.findAnnotation;

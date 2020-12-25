@@ -24,10 +24,10 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.genji.provider.ReflectionSupport.*;
 
+@Samples
 public class GenjiProvider implements ArgumentsProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GenjiProvider.class);
-    private static final int DEFAULT_SAMPLE_SIZE = 20;
     private static final Random RANDOM = new Random();
 
     @Override
@@ -84,7 +84,7 @@ public class GenjiProvider implements ArgumentsProvider {
         return methodAnnotation(method, Samples.class)
                                 .map(Samples::value)
                                 .filter(v -> v > 0)
-                                .orElse(DEFAULT_SAMPLE_SIZE);
+                                .orElse(GenjiProvider.class.getAnnotation(Samples.class).value());
     }
 
     private static List<Map<Class<?>, CustomGeneratorInfo>> collectCustomGenerators(Method testMethod) {

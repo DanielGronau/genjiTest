@@ -1,9 +1,9 @@
 package org.genji.generators.collection;
 
 import org.genji.Generator;
+import org.genji.TypeInfo;
 import org.genji.provider.GeneratorResolver;
 import org.genji.provider.ReflectionSupport;
-import org.genji.TypeInfo;
 
 import java.util.Optional;
 import java.util.Random;

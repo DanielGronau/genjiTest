@@ -1,14 +1,15 @@
 package org.genji.generators.values;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.*;
+
 /**
  * Specifies characteristics of {@link String}s.
  */
-@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE, ElementType.TYPE_USE})
+@Target({MODULE, PACKAGE, TYPE, METHOD, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StringSpec {
     //overwrites the other properties

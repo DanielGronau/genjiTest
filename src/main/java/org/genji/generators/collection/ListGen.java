@@ -1,8 +1,8 @@
 package org.genji.generators.collection;
 
 import org.genji.Generator;
-import org.genji.provider.GeneratorResolver;
 import org.genji.TypeInfo;
+import org.genji.provider.GeneratorResolver;
 
 import java.util.ArrayList;
 import java.util.List;

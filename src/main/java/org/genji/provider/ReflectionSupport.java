@@ -112,9 +112,13 @@ public final class ReflectionSupport {
     public static Map<Class<? extends Annotation>, Annotation> methodAnnotations(Method method) {
         var targetClass = method.getDeclaringClass();
         var targetPackage = targetClass.getPackage();
+        var targetModule = targetClass.getModule();
         Map<Class<? extends Annotation>, Annotation> defaultMap =
-            Arrays.stream(targetPackage.getAnnotations())
+            Arrays.stream(targetModule.getAnnotations())
                   .collect(toMap(Annotation::annotationType, a -> a, (a1, b) -> b));
+        defaultMap.putAll(
+            Arrays.stream(targetPackage.getAnnotations())
+                  .collect(toMap(Annotation::annotationType, a -> a, (a1, b) -> b)));
         defaultMap.putAll(
             Arrays.stream(targetClass.getAnnotations())
                   .collect(toMap(Annotation::annotationType, a -> a, (a1, b) -> b)));
@@ -149,7 +153,8 @@ public final class ReflectionSupport {
     public static <A extends Annotation> Optional<A> methodAnnotation(Method method, Class<A> type) {
         return annotationOfType(method, type)
                    .or(() -> annotationOfType(method.getDeclaringClass(), type))
-                   .or(() -> annotationOfType(method.getDeclaringClass().getPackage(), type));
+                   .or(() -> annotationOfType(method.getDeclaringClass().getPackage(), type))
+                   .or(() -> annotationOfType(method.getDeclaringClass().getModule(), type));
     }
 
     public static <A extends Annotation> Optional<A> annotationOfType(AnnotatedElement element, Class<A> type) {
