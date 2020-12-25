@@ -5,7 +5,16 @@
 ## @Seed
 
 <table>
-<tr><th> Element </th><th> Description</th><th>Example</th></tr>
-<tr><td> `long value` </td><td>  the seed used for random generators</td><td>`@Seed(42)`</td></tr>
+<tr>
+<th> Element </th>
+<th> Description</th>
+<th>Example</th>
+</tr>
 
+<tr>
+<td> <code>long value</code> </td>
+<td>  the seed used for random generators</td>
+<td><code>@Seed(42)</code></td>
+</tr>
+</table>
 
