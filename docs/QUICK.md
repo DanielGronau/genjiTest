@@ -61,8 +61,8 @@ Annotations can be also set for individual method parameters:
 import org.genji.GenjiTest;class MyTest {
   @GenjiTest
   void myTestMethod(
-    @StringSpec(oneOf={"a","b","c"}) String a, 
-    @StringSpec(oneOf={"1","2","3"}) String b) {
+    @StringSpec(oneOf = {"a","b","c"}) String a, 
+    @StringSpec(oneOf = {"1","2","3"}) String b) {
   }
 }
 ```
@@ -72,7 +72,7 @@ You can even control the behavior of individual generic type parameters. Here yo
 ```java
 import org.genji.GenjiTest;class MyTest {
   @GenjiTest
-  void myTestMethod(List<@Size(from=1, to=3) Set<String>> listOfSetsOfStrings) {
+  void myTestMethod(List<@Size(from = 1, to = 3) Set<String>> listOfSetsOfStrings) {
   }
 }
 ```
