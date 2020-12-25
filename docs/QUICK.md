@@ -10,13 +10,29 @@ overwrite annotations in higher levels. Of course, not all annotations can be pu
 
 ### Module Level
 
-... not yet supported ...
+* This feature works only if you want to use the Java 9 module system
+* Add a new file `module-info.java` to your module, or edit the existing one
+* At the start of the file, add all annotation you like
+* Then add the module description itself 
+
+Assume you have a module `my.project.module`, and you want to add a `@Size` annotation to it, 
+to have a default size range from 3 to 7 for all generated collections. 
+Then your `module-info.java` file should look like this:
+
+```java
+import org.genji.generators.collection.Size;
+
+@Size(from = 3, to = 7) 
+module my.project.module {  
+   // other requires and exports declarations
+}
+```
 
 ### Package Level
 
-* Add a new file `package-info.java` to your package
+* Add a new file `package-info.java` to your package, or edit the existing one
 * At the start of the file, add all annotations you like
-* Then add the package reference itself `package my.project;`
+* Then add the package reference itself
 * Then import the annotations
 
 Assume you have a test package `my.project`, and you want to add a `@Size` annotation to it, 
