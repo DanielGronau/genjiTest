@@ -21,6 +21,10 @@ light-weight approach and tight JUnit integration of the project.
 
 Please note that GenjiTest is written in Java 11, and will not work in older Java versions.
 
+## Documentation
+
+Start [here](./docs/CONTENT.md)
+
 ## How does it work?
 
 * The mechanism for integration with JUnit 5 is described in [JUnit 5 Documentation - Parameterized Tests](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests).
