@@ -4,7 +4,8 @@
 
 ## @Seed
 
-| Element | Description | Example |
-| `long value` | The seed used for Random generators | `@Seed(42)` |
+<table>
+<tr><th> Element </th><th> Description</th><th>Example</th></tr>
+<tr><td> `long value` </td><td>  the seed used for random generators</td><td>`@Seed(42)`</td></tr>
 
 
