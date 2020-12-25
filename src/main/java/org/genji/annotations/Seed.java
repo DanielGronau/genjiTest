@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * {@link org.genji.Generator} will be deterministic.
  *
  */
-@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE, ElementType.TYPE_USE})
+@Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Seed {
     long value();
